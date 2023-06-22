@@ -1,0 +1,2454 @@
+Get up and running with Evervault Encryption in less than 5 minutes.
+
+In this example, we will use Inbound Relay to encrypt a sensitive piece of data. Before starting this tutorial, you'll need to sign up for an Evervault account and create an App.
+
+Getting Started
+
+Create an endpoint
+To get started with Inbound Relay, you will need an API endpoint that is accessible publicly over the internet. In this example, we will use RequestBin — a free service for generating temporary API endpoints which allows you to log and inspect request and response payloads.
+
+You can create a RequestBin by navigating to requestbin.com/r. After doing so, you will be presented with an API endpoint URL which you can send requests to.
+
+You can send an HTTPS POST request to your RequestBin using the following cURL script:
+
+ 
+curl https://[YOUR_REQUESTBIN_ID].x.pipedream.net \
+--request POST \
+--header 'Content-Type: application/json' \
+--data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+If you navigate back to the RequestBin Dashboard, you should be able to see the payload by clicking the request in the log panel on the left.
+
+
+
+Create an Inbound Relay
+Now that you have a publicly accessible API endpoint, you can create an Inbound Relay. An Inbound Relay is an encryption proxy that sits between the client and the server.
+
+To create an Inbound Relay, go to the Inbound Relay section within your App in the Evervault Dashboard. Click the “Create an Inbound Relay” button and paste in your RequestBin endpoint URL as the target.
+
+You’ll then be given a new API endpoint which you can send requests to. Your domain name should look like https://[YOUR_REQUESTBIN_ID]-x-pipedream-net.relay.evervault.com. Any requests that are sent to this API endpoint will be intercepted by Evervault before being proxied to the original destination API endpoint.
+
+Run the same cURL command with the new Evervault API endpoint you just generated. Look in RequestBin and, you will see that the request has gone through, but the data is still visible because you haven't encrypted it yet. In the next section, we’ll configure the proxy to encrypt certain fields in the request.
+
+ 
+curl https://[YOUR_REQUESTBIN_ID]-x-pipedream-net.relay.evervault.com \
+--request POST \
+--header 'Content-Type: application/json' \
+--data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+Specify Fields to Encrypt
+Now that you are proxying traffic through Inbound Relay, you can configure it to start encrypting sensitive fields.
+
+Since you are sending a Social Security Number in the request which, is considered sensitive Personally Identifiable Information (PII), you need to encrypt this field. Navigate to the Encrypted Fields section within your Inbound Relay’s configuration page in the Evervault Dashboard. You will be presented with a list of request structures that were routed through your Relay in the preceding 24 hours.
+
+encrypted fields
+
+You should see an entry for POST / with an option to configure the fields encrypted. Click the Configure button and toggle the ssn field. Once you save your changes, your Inbound Relay will now start encrypting the ssn key within all JSON and XML requests.
+
+You can also specify fields to encrypt manually using JSONPath Selectors. This is useful for more advanced query patterns.
+
+Run the same cURL command from the previous step. You will see that the request logged in the RequestBin will contain the name in plaintext, and the ssn field will be an Evervault-encrypted string.
+
+ 
+curl https://[YOUR_REQUESTBIN_ID]-x-pipedream-net.relay.evervault.com \
+--request POST \
+--header 'Content-Type: application/json' \
+--data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+
+
+You have successfully encrypted your first string with Inbound Relay!
+
+What’s next?
+Any string you encrypt using Inbound Relay can be used across the rest of the Evervault Platform. To process encrypted data using your code, you can use either Evervault Functions or Evervault Cages.
+
+Inbound Relay is an encryption proxy that intercepts and encrypts selected fields and files in an HTTPS request before forwarding the request to its original destination.
+
+Since fields are encrypted before reaching your server, you can collect sensitive data (like credit card numbers, SSNs, credentials or health data) from your users without ever handling it in plaintext.
+
+Inbound Relay can be placed in front of any HTTPS API and configured within the Evervault Dashboard to encrypt any fields within a JSON, XML or multipart/form-data payload.
+
+Getting Started
+
+Get up and running with Evervault Encryption in less than 5 minutes.
+
+In this example, you will use Inbound Relay to encrypt a sensitive piece of data. Before starting this tutorial, you'll need to sign up for an Evervault account and create an App.
+
+Create an endpoint
+To get started with Inbound Relay, you will need an API endpoint that is accessible publicly over the internet. In this example, we will use RequestBin — a free service for generating temporary API endpoints which allows you to log and inspect request and response payloads.
+
+You can create a RequestBin by navigating to requestbin.com/r. After doing so, you will be presented with an API endpoint URL which you can send requests to.
+
+You can send an HTTPS POST request to your RequestBin using the following cURL script:
+
+ 
+curl https://[YOUR_REQUESTBIN_ID].x.pipedream.net/secure \
+		 --request POST \
+		 --header 'Content-Type: application/json' \
+		 --data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+If you navigate back to the RequestBin Dashboard, you should be able to see the payload by clicking the request in the log panel on the left.
+
+Create an Inbound Relay
+Now that you have a publicly accessible API endpoint, you can create an Inbound Relay. An Inbound Relay is an encryption proxy that sits between the client and server.
+
+To create an Inbound Relay, go to the “Inbound Relay” section within your App in the Evervault Dashboard. Click the “Create an Inbound Relay” button and paste in your RequestBin endpoint URL as the target.
+
+You’ll then be given a new API endpoint which you can send requests to. Any requests that are sent to this API endpoint will be intercepted by Evervault before being proxied to the original destination API endpoint. In the next section, you’ll configure the proxy to encrypt certain fields in the request.
+
+If we run the previous cURL command with our new Evervault API endpoint, the request will be proxied to RequestBin without any fields having been encrypted.
+
+ 
+curl https://[YOUR_REQUESTBIN_ID]-x-pipedream-net.relay.evervault.com/secure \
+		 --request POST \
+		 --header 'Content-Type: application/json' \
+		 --data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+Specify Fields to Encrypt
+Now that you’re proxying traffic through Inbound Relay, you can configure it to start encrypting sensitive fields.
+
+In the example above, you are sending a name and a Social Security Number. Begin by encrypting the Social Security Number. If you navigate to the Encrypted Fields section within your Inbound Relay’s configuration page in the Evervault Dashboard, you will be presented with a list of request structures that were routed through your Relay in the preceding 24 hours.
+
+You should see an entry for POST / with an option to configure the fields encrypted. Simply click the Configure button and toggle the ssn field. Once you save your changes, your Inbound Relay will now start encrypting the ssn key within all JSON, XML and multipart/form-data requests.
+
+You can also specify fields to encrypt manually using JSONPath Selectors. This is useful for more advanced query patterns.
+
+When you run the same cURL command as above, you will see that the request logged in the RequestBin will contain the name in plaintext and the ssn field will be an Evervault-encrypted string.
+
+ 
+curl https://[YOUR_REQUESTBIN_ID]-x-pipedream-net.relay.evervault.com/secure \
+		 --request POST \
+		 --header 'Content-Type: application/json' \
+		 --data '{"name":"Claude Shannon", "ssn":"123-12-1234"}'
+You have successfully encrypted your first string with Inbound Relay!
+
+What’s next?
+Any strings you encrypt using Inbound Relay can now be used across the rest of the Evervault Platform. To share it with a third-party API, you can use Outbound Relay. To process it using your own code, you can use either Evervault Functions or Evervault Cages.
+
+Response Decryption
+By default, Inbound Relay will automatically scan any responses from your endpoint and decrypt any fields containing Evervault-encrypted data. This means that any clients of your Inbound Relay will never interact with encrypted data, but your endpoint will only ever see encrypted data.
+
+Response Encryption Diagram
+
+Custom Domains
+Inbound Relay lets you specify custom domain names if you would prefer not to include an evervault.com hostname in your Inbound Relay’s URL. During Relay creation, simply specify your own hostname of choice. The Dashboard will then guide you through adding a custom CNAME record to point traffic to your Inbound Relay. The CNAME required will point to custom.relay.evervault.com.
+
+If you require client IPs in your target server, you can change the CNAME to point to direct.custom.relay.evervault.com. This will append the client IP to the X-Forwarded-For header of the request.
+
+mTLS
+Inbound Relay lets you upload a client certificate to authenticate with the target server over mTLS. You can upload a client cert on the configuration page of your Inbound Relay. When mTLS is enabled, requests through that Relay will require an Evervault API Key. This can be added as an HTTP header (api-key: API-KEY...). If the mTLS cert has a password attached, it is encrypted with your team's encryption keys before being sent to Evervault's backend.
+
+Fields to Encrypt
+Inbound Relay supports several different content types. Currently, we support JSON, XML, Form URL Encoded and Multipart Form Data. When it comes to configuring your fields to encrypt, it can vary depending on what Content-Type you're targeting. JSON and XML both support JSONPath selectors for more advanced field selection deep into the objects themselves, while Form URL Encoded and Multipart Form Data only take the names of the fields to be encrypted since they are both flat structures.Fields to EncryptWhen you add a field to encrypt, you will be asked whether you're adding a JSON field or a Form field. JSON fields will only attempt to match on JSON and XML requests, while form fields will only be applied to Form URL encoded and Multipart Form data requests.
+
+WebSockets
+Inbound Relay supports WebSockets. Simply use your Relay hostname as the WebSocket target, and we will transparently encrypt and decrypt all client-server and server-client messages containing JSON or XML.
+
+File Encryption
+Inbound Relay supports encrypting files and text-fields in multipart/form-data uploads. Simply configure the relevant form fields in your Relay's Fields To Encrypt. Encrypted files will arrive at your server with an unchanged filename, but the bytes in the file will be fully encrypted.
+
+All Evervault encrypted files begin with the unicode bytes %EVENC. You can use this to validate that files are arriving encrypted.
+
+For Response Decryption, Relay will scan and decrypt both multipart/form-data responses or raw file responses, e.g. image/png.
+
+There is currently a per-request limit of 25 MB for encryption/decryption.
+
+To help you get started, check out our Guide to File Encryption!
+
+Alerts
+Alerts allow you to see errors in Slack, Discord or sent to any webhook url of your choice. You can create an alert for your Relay inside of the Evervault Dashboard by navigating to Relay -> Alerts -> Add Alert
+
+Webhooks
+When you configure a custom webhook to receive alerts, the following fields will be in the response.
+
+Fields
+teamUuid
+Unique identifier for your team.
+
+errorMessage
+Message explaining what went wrong.
+
+evMessage
+Message about where the error has occurred.
+
+activityLink
+A link to view the failed transaction in the dashboard.
+
+timestamp
+The time the error occurred.
+
+errorType
+The relay error code
+
+statusCode
+The HTTP response code.
+
+statusGroup
+4XX, 5XX or ERR
+
+relayUuid
+Unique identifier for your Relay.
+
+inboundDomain
+Your Relay domain.
+
+Error Codes
+If you received a failed response from Relay that included an X-Evervault-Error-Code header or if you received a JSON response with an evervault-error-code field in the case of programmatic access, you can use this Relay error code reference to help resolve the issue.
+
+Error Codes
+subdomain-not-found
+This error indicates you are sending a request to a Relay (e.g my-api-com.relay.evervault.com) which doesn't exist. Ensure you have entered the Relay subdomain correctly. Also, ensure you have configured your Relay correctly by following our Relay documentation.
+
+If you are still having issues, please contact support.
+
+request-timeout
+The target took too long to respond. The error can have many causes ranging from network issues to malformed client requests. Ensure the target domain URL is correct, wait a few moments and try again. If the error persists, reach out to the owner of the target domain through any support channels they have in place.
+
+service-unavailable
+The target refused the connection and could not be reached. Ensure the target host is healthy. We recommend that you implement retry behaviour to mitigate the impact of brief issues with the network or target host.
+
+internal-server-error
+There was an issue with Relay itself. Try again in a few moments. If the issue persists, reach out to support.
+
+relay-not-found
+There was an issue finding a Relay for the provided domain. Make sure you are using the correct domain. If your domain is correct but you are still seeing this issue, ensure you have Relay configured correctly by following our Relay documentation.
+
+unsupported-content-type-in-response
+This error occurs when Relay is configured to perform response encryption and receives an unsupported content type as a response from the endpoint. Currently, Relay only can only encrypt JSON, XML and multipart/form-data structured data.
+
+If your endpoint does not support these formats, one way to get around this limitation is to move your request logic into a Function in which you parse the plaintext into a suitable form, encrypt it and return it to the client.
+
+proxy-auth-failed
+There was an issue authenticating with the provided API key. Ensure that you are using the correct API key.
+
+encrypted-data-in-field
+There was encrypted data where it wasn't expected. This can mean a number of things:
+
+An inbound request header value contained Evervault encrypted data.
+An inbound request payload had Evervault encrypted data as the value of one of the fields, which was not going to be encrypted.
+The target URI for the inbound request had Evervault encrypted data as part of the path.
+bad-request
+The server is unable (or refuses) to process the request sent by the client, due to an issue that is perceived by the server to be a client problem.
+
+forbidden-destination
+Your App has made an outbound request to a destination that isn't trusted by Relay.
+
+content-length-required
+The Content-Length header is either not present or isn't a number.
+
+payload-too-large
+This request exceeds the request size limit in Relay. The current per-request limit is 25 MB for encryption/decryption.
+
+Outbound Relay is an invisible decryption proxy that lets you share encrypted data with third-party APIs, without the third-party having to decrypt any fields themselves.
+
+Outbound Relay is available in all our server-side SDKs (Node.js, Python, Ruby and Java), or you can manually specify it as a proxy in your request.
+
+Under the hood, Outbound Relay is an HTTP CONNECT proxy that intercepts requests from your API to specific third-party hostnames, terminates TLS and swaps encrypted data with the original plaintext.
+
+By the time the request reaches the third-party API, all fields are decrypted, and the request will appear as a valid API request for the third-party.
+
+Getting started
+
+Step 1: Configure the proxy
+There are two ways to configure your requests to go through Outbound Relay. The first and most straightforward of these is to include one of our server-side SDKs in your API. Alternatively, if your language of choice is not supported yet, you can still use Outbound Relay by specifying the proxy in your request as shown below using curl.
+
+In this example, we will use RequestBin to generate an testing API that will log all requests, including their payloads. We can create a RequestBin by navigating to requestbin.com/r, where we will be given a temporary URL which we can send requests to.
+
+Using an Evervault SDK
+To use Outbound Relay, simply include and initialize the Evervault SDK in your application and enable outbound relay. Outbound Relay can be used in any of our server-side SDKs.
+
+Node.js
+Python
+Ruby
+Java
+ 
+const Evervault = require('@evervault/sdk');
+const evervault = new Evervault('<API_KEY>');
+evervault.enableOutboundRelay();
+Then, using HTTPS libraries in the language of your choice, we can send a request to the RequestBin, and the Evervault SDK will automatically intercept requests and route them through Outbound Relay.
+
+Node.js
+Python
+Ruby
+Java
+ 
+const Evervault = require('@evervault/sdk');
+const axios = require('axios');
+const evervault = new Evervault('<API_KEY>', {
+	enableOutboundRelay: true
+});
+const REQUESTBIN_URL = '[YOUR_REQUESTBIN_URL]';
+(async () => {
+	const ssn = await evervault.encrypt('123-4567-123');
+	const result = await axios.post(REQUESTBIN_URL, {
+		name: 'Claude Shannon',
+		ssn
+	});
+	console.log(result);
+})();
+Note: For this demo we are using the .encrypt method to create some encrypted data. In production, you should avoid ever having plain text reach your server.
+
+Using curl
+If your language of choice is not supported yet, you can still use Outbound Relay by specifying the proxy in your request to be https://relay.evervault.com and including your Evervault API key in the Proxy-Authorization header. To configure this in an HTTP client within your code you'll need to set up an HTTP CONNECT proxy over TLS, and trust our CA cert.
+
+ 
+curl https://[YOUR_REQUESTBIN_ID].x.pipedream.net \
+    --proxy https://relay.evervault.com \
+    --request POST \
+    --header 'Content-Type: application/json' \
+    --header 'Proxy-Authorization: <API_KEY>' \
+    --data '{"name":"ev:encrypted_string"}' \
+    -k
+You should now see the request appear in the RequestBin logs with the data still encrypted. We can now configure Outbound Relay to decrypt all sensitive data being sent to the RequestBin.
+
+
+
+Step 2: Configure endpoints to decrypt
+Once you have included the Evervault SDK in your application, Outbound Relay can be enabled for specific domains within the Evervault Dashboard.
+
+Within the Outbound Relay tab in your App, you can specify the hostnames of the APIs you want to send encrypted data to. In this case, we’ll add our RequestBin as an Outbound Relay Destination.
+
+Screenshot of adding an outbound destination
+
+If we run our application and send the request again, we’ll be able to see another request in our RequestBin. This time, the encrypted ssn that we sent from our application was automatically decrypted by Outbound Relay before being passed to the RequestBin.
+
+
+
+This flow means you can still interact with any third-party API that requires sensitive data in plaintext, while keeping it encrypted at all times within your application.
+
+What’s next?
+Congratulations! You have successfully configured Outbound Relay to share encrypted data with a third-party API without handling it in plaintext.
+
+If you need to process encrypted data using your own code, check out Functions.
+
+Response Encryption
+If you would like to encrypt responses from the third-party API before they reach your server (for example, encrypting bank details returned from a payments API), you can specify fields or files to encrypt in the Settings of your Outbound Relay Destination.
+
+File Decryption
+Outbound Relay supports decrypting files and text fields in multipart/form-data uploads.
+
+For Response Encryption, Outbound Relay supports encrypting files and text-fields in multipart/form-data uploads. Simply add the names of the relevant fields in your form to your fields to encrypt.
+
+There is currently a per-request limit of 25 MB for encryption/decryption.
+
+Evervault Functions lets you process data encrypted with Evervault Encryption using secure serverless functions, which are hosted on Evervault’s infrastructure and written in Node.js or Python.
+
+Any encrypted data that is passed to a Function is decrypted by the Function’s runtime. This allows you to process and run logic on that data as you normally would — without handling it in plaintext on your infrastructure. Functions also support network requests to third-party APIs, for instance, where your data needs to be manipulated before or after being shared.
+
+For more complex processes, processes requiring more compute resources or processes that have longer running times check out Evervault Cages — the easiest way to build, deploy and scale Secure Enclaves.
+
+Getting Started
+Get up and running with Evervault Functions in less than 5 minutes.
+
+In this example, we will deploy an Evervault Function and call it using one of our server-side SDKs. Before starting this tutorial, you'll need to sign up for an Evervault account and create an App.
+
+Deploy a Function
+You can deploy a Function by connecting to a GitHub repository or using the Evervault CLI.
+
+Run your Function
+Congratulations! You have successfully created and deployed your first Function.
+
+Functions can be invoked using our server-side SDKs, our CLI or by sending an HTTPS request.
+
+Try out any of the examples below to test your new Function!
+
+Node.js
+Python
+cURL
+ 
+const Evervault = require('@evervault/sdk');
+const evervault = new Evervault('<API_KEY>');
+(async () => {
+    const encryptedName = await evervault.encrypt("Claude Shannon");
+    const result = await evervault.run("hello-function", {
+        name: encryptedName
+    });
+    console.log(result);
+})();
+Encryption within a Function
+An encrypt function is available within your Function and can be accessed through the context parameter. This allows you to encrypt data in your response using your App’s keys.
+
+The below examples demonstrate how to use the encrypt Function in Node and Python.
+
+Node.js
+Python
+ 
+exports.handler = async (data, context) => {
+  return {
+    secret: await context.encrypt("Super Secret String"),
+  };
+};
+Functions Response
+Any payload returned from a function will be contained within the result of the response object. Along with the result, the runId , a unique identifier for this functions invocation and the appUuid , the identifier of the App this function belongs to are also returned. The runId can be used to search for a functions
+
+ 
+{
+  "result": {
+    "message":"Hello from a Function! It seems you have 4 letters in your name",
+  },
+  "runId":"ec9f1bd5-425d-47b2-a723-bd9e16a08f18",
+  "appUuid":"app_5ad66g419121"
+}
+Dependencies
+When you deploy a Function to Evervault, we will locate your package.json or package-lock.json (for Node.js) and requirements.txt file (for Python) and install any non-development dependencies.
+
+For Node.js Functions, if a node_modules folder is included then dependency installation will be skipped; this can be used to include private dependencies.
+
+Resource Limits
+What are the resource limits of Functions?
+Evervault Functions currently have a maximum memory consumption of 1024MB, however this can be increased to 10,240MB on request. They currently have 2 available CPU cores, but this can also be increased to 6 cores.
+
+Functions have 512MB of ephemeral filesystem storage available by default, which can be increased to 10,240MB on request. However, using ephemeral storage is not recommended for sensitive data, as it cannot be guaranteed that data won't be available to a future invocation — increasing the risk of an accidental data leak.
+
+What is the maximum execution time of a Function?
+Evervault Functions currently have a maximum of 30 seconds execution time due to their request-response serverless architecture.
+
+By passing an X-Async header to the Function Run endpoint or by passing async: true as an option to the Function Run functions in our SDKs, you can run Functions for up to 15 minutes as a background job.
+
+Functions running in async mode will not return a response, and all function output must be explicitly passed from the Function to another endpoint.
+
+How scalable are Evervault Functions?
+Evervault Functions will scale automatically to many thousands of requests per second without a noticeable drop in throughput or latency. We are actively improving Function latency and scalability for more intense workloads and see this as a core priority for our product roadmap.
+
+Networking
+Can I limit who can send requests to my Functions?
+Evervault Functions has an Inbound Whitelist feature which lets you create a list of IP addresses that can invoke your Function.
+
+By default, Functions will respond to requests invoked from any client with a valid Evervault API key or Run Token. By adding a domain name to the Inbound Whitelist in the Dashboard, your Function will only be invoked when a request is made from a whitelisted IP address.
+
+Can I send requests to external APIs from a Function?
+Evervault Functions has an Outbound Whitelist feature which lets you create a list of external hostnames that your Function can send requests to.
+
+By default, Functions can send requests to any third-party endpoint. When sending data to a third-party endpoint via your Function, Evervault ensures that the destination hostname is included in your API Whitelist (if provided).
+
+By adding a domain name to the Outbound Whitelist in the Dashboard, your Function will only have network access to the hostnames you specify.
+
+Run Tokens
+Run Tokens are single use, time bound tokens for invoking an Evervault Function with a given payload. Run Tokens will only last for 5 minutes and must be used with the same payload that was used to create the Run Token.
+
+Once created, Run Tokens can be used to invoke an Evervault Function client-side without providing a sensitive API Key.
+
+ 
+curl -X POST https://run.evervault.com/hello-function \
+		 -H 'Authorization: Bearer [RUN_TOKEN]' \
+		 -H 'Content-Type: application/json' \
+		 --data '{"name": "Claude Shannon", "ssn": "ev:encrypted_string"}'
+Reference
+function.toml
+Evervault Functions can be configured using a function.toml configuration file which can be committed to source control. Simply include a function.toml file in the root of your repository and Evervault will automatically include it at build time.
+
+The format of your function.toml is as follows:
+
+ 
+[function]
+# Customize your Function's timeout by providing a positive integer value.
+# The timeout is defined in seconds.
+# Default: 30
+# Maximum: 900
+timeout = 120
+# Customize your Function's entry point by specifying the handler in the form `<FILE>.
+handler = "main.myFunc"
+# The name of your Function
+name = "your-function-name"
+# The language of your Function
+# Node: node@18, node@16
+# Python: python@3.7, python@3.8, python@3.9
+language = "node@18"
+Default Function Configuration
+Option	Value
+Node.js Version	Version 16
+function.timeout	30 seconds
+Memory	1024MB
+Ephemeral Storage	512MB
+Environment Variables
+Environment Variables for a Function can be configured using either the UI or CLI. Secrets can be encrypted on creation and will be made available to your Function handler in plaintext on startup.
+
+To manage your environment in the UI, navigate to Function -> Environment Variables. Alternatively use the ev function env command in the CLI.
+
+Secrets are only available in plaintext in the Function handler.
+
+Alerts
+Alerts allow you to see errors in Slack, Discord or sent to any webhook url of your choice. You can create an alert for your Function inside of the Evervault dashboard by navigating to Function -> Alerts -> Add Alert
+
+Webhooks
+When you configure a custom webhook to receive alerts, the following fields will be in the response.
+
+Fields
+teamUuid
+Unique identifier for your team.
+
+errorMessage
+Message explaining what went wrong.
+
+evMessage
+Message about where the error has occurred.
+
+activityLink
+A link to view the failed transaction in the dashboard.
+
+timestamp
+The time the error occurred.
+
+errorType
+The function error code
+
+statusCode
+The HTTP response code.
+
+statusGroup
+4XX, 5XX or ERR
+
+functionUuid
+Unique identifier for your Function.
+
+functionName
+The name of your Function.
+
+Error Codes
+If you received a failed response from the Function Run API that included an X-Evervault-Error-Code header or if you received a JSON response with an evervaultErrorCode field in the case of programmatic access, you can use this error code reference to help resolve the issue.
+
+Error Codes
+request-timeout
+The function run timed out as it took too long to complete. Ensure all paths in your function complete within the timeout specified in the Functions reference.
+
+decryption-error
+There was an issue decrypting the data passed to the function. Ensure that the data being passed to the function was encrypted by the same app that owns the function.
+
+unauthorized
+This error indicates that you are not authorized to access the resource you are requesting. Ensure that you have included the correct api key in your request.
+
+bad-request
+The server is unable (or refuses) to process the request sent by the client, due to an issue that is perceived by the server to be a client problem.
+
+resource-not-found
+The API is unable to find the resource you have requested.
+
+internal-error
+There was an issue with the Functions service itself.
+
+forbidden-ip-error
+That the IP address of the client which invoked the Function is not present in the IP whitelist. Ensure that your Function’s IP whitelist is correctly defined and includes any tenants that you expect to invoke the Function.
+
+run-token-validation-error
+The run token used in the run request is failing to verify. Ensure that the run token being returned from the SDK has not been altered in any way.
+
+run-token-expired
+The run token used in the run request has expired. Run Tokens have a time to live of five minutes.
+
+payload-verification-error
+The payload in the run request does not match that used to create the run token. Ensure that the same payload is used when creating the run token and running the function.
+
+run-token-used-error
+The run token has already been used. Run Tokens are single use only. Generate a new run token to be able to run the function again.
+
+function-not-ready-error
+This function hasn't been invoked in a long time and entered an inactive state. This will resolve itself after a few moments; just wait and try your request again.
+
+Evervault Cages are the easiest way to build, deploy and scale Secure Enclaves.
+
+Evervault Cages allow developers to easily deploy Docker containers in a Secure Enclave, powered by AWS Nitro Enclaves. Cages offer easy deployment, invocation and attestation of Secure Enclaves without the engineering overhead.
+
+If you haven’t already — join the beta waitlist here. Once your account is approved and added to the beta, you’ll receive an email from our team with next steps.
+
+Cages Beta
+How long is the beta program?
+Starting from the day you deploy your first Cage, you will have full access to the Evervault Platform (free plan) and Cages for 14 days, so you can try building and deploying Cages. After that period, you’ll have the option to sign up for heavily discounted monthly pricing to continue testing.
+
+If you’re unsure how long you have — you can always check the countdown timer in your Evervault Dashboard to see how much time is left in the allotment. If you need to adjust the timing or have any questions regarding the program, feel free to reach out to our team.
+
+How many Cages can I create?
+During the 14 day beta period — A team can run up to two Cages. In order to manage our costs, Cages will run as a single instance which may cause downtime for deployments, however this is only for your beta testing period.
+
+Following initial beta — If you upgrade to a paid plan when the beta ends and start using Cages in production, we will provide multiple instances with high availability and zero downtime deployments.
+
+What happens during the beta?
+Try it out! Start here if you’re not sure where to get started.
+
+You’ll hear from us a few times to check-in. We’ll also notify you when the period is coming to an end, to ensure you’re getting the most of out it.
+
+While we’re not enforcing any specific feedback structure, we would love to know more about the use cases you are building for, any errors or bugs you encounter, and any feedback you have.
+
+Reach out to cages-beta@evervault.com
+Join our Discord server
+What happens after the beta?
+At the end of the 14-day period, we’ll notify you that your beta access has ended, and any active Cages will be deactivated.
+
+Once deactivated, you will be able to access your Cage in your free account, but no instances will be running. If at any time you’d like to continue using Cages, you can easily upgrade to a paid plan with discounted beta pricing, and we will restart your Cage instances.
+
+Upgrading to the paid plan will give you access to all of the Evervault Pro features and allow you to run multiple Cage instances with high availability and zero downtime deployments.
+
+Interested in locking in limited beta pricing for Cages? Email cages-beta@evervault.com.
+
+Other questions?
+If anything comes up during the beta, please send us an email at cages-beta@evervault.com, and we’ll get back to you as soon as possible.
+
+Getting Started
+Get up and running with Cages.
+
+Install the Cages CLI
+Once you have access to the private beta, you can install the Cages CLI by running the following command in your terminal:
+
+ 
+curl https://cage-build-assets.evervault.com/cli/install -sL | sh
+While in beta, the Cages CLI is separate to the main Evervault CLI.
+
+Install Docker
+The Cages CLI needs to perform Docker builds using the Docker CLI. Docker must be installed on your system.
+
+Clone Hello Cage repository
+To create your first Cage, you’ll need a server and a Dockerfile.
+
+If you don’t have one already, then you can use our Hello, Cage! repository (a simple Node.js Express server) as a starting point. You can clone it by running the following command:
+
+ 
+git clone https://github.com/evervault/hello-cage
+Authenticating with the Cages CLI
+The Cages CLI currently only supports API Key authentication. To setup a session in your terminal, you will first need to create an App API Key in the Evervault Dashboard.
+
+Once you have your API Key you can create the session by running:
+
+ 
+export EV_API_KEY=<API_KEY>
+Initialize your Cage
+Now we can initialize your Docker server as a Cage. This will reserve the Cage name within your Evervault App, so you can deploy your service.
+
+For our first Cage, we’ll enable some features which help us see what’s happening inside the Secure Enclave, namely: debug mode and network egress. To do that, we need to run the following command:
+
+ 
+ev-cage init -f ./Dockerfile \
+                --name hello-cage \
+                --debug --egress
+Configure your Cage
+This command will generate a cage.toml file in your current directory containing the configuration for your Cage. It should look something like this:
+
+ 
+name       = "hello-cage"
+uuid       = "<YOUR_CAGE_ID>"
+app_uuid   = "<APP_ID>"
+team_uuid  = "<TEAM_ID>"
+debug      = true
+dockerfile = "Dockerfile"
+[egress]
+enabled = true
+ports = ["443"]
+[signing]
+certPath = "~/.ev/cages/cert.pem"
+keyPath  = "~/.ev/cages/key.pem"
+You can edit this .toml file whenever you want to reconfigure your Cage.
+
+Build your Cage
+Now that we have our cage.toml, we can build our Cage. The build command will convert the service’s Dockerfile into a Cage-compatible Enclave Image File (.eif). A .eif file is a binary image that is used to initialize an AWS Nitro Enclave, and all attestation measures are based on the .eif binary.
+
+Because our cage.toml is in the current directory, we can run:
+
+ 
+ev-cage build --output .
+The first build will be slow (approximately 2 minutes) as the CLI has to build several Docker images. Each subsequent build should be faster once the images have been cached.
+
+Once the Cage has finished building, the Cage PCRs will be written to the cage.toml file. This will help with tracking changes in attestation measures within source control.
+
+Our cage.toml should have a section that looks something like this at the end of it:
+
+ 
+[attestation]
+HashAlgorithm = "Sha384 { ... }"
+PCR0 = "8576aa759528d6dc82b6a35504edf491bcf245266acb5745f7f15801e15988a5abbc8c637af3edeb96efcbe8e8a433a1"
+PCR1 = "bcdf05fefccaa8e55bf2c8d6dee9e79bbff31e34bf28a99aa19e6b29c37ee80b214a414b7607236edf26fcb78654e63f"
+PCR2 = "4ffe3d8b0211341c9eac73abccfcfed63f694a4a84b7758e70d1941d0ac6c0a7091c7860aa1ff2e4d39bbdd2b220608f"
+PCR8 = "9f357c7861268d124143701d30fbd0401f4f2854db7698851c51a08bc719abe9cc89645324d24cdbac1f216b482d6ad8"
+These four PCR values are the attestation measurements that we will use to trust the remote server (the Cage) before we share any sensitive data with it. The four measurements reflect various aspects of the image you are running in the enclave.
+
+PCR	Measures	Explanation
+PCR0	Enclave Image File	A measure of the Image that will be run within the Cage.
+PCR1	Linux Kernel and Bootstrap	A measure of the kernel and boot ramfs data.
+PCR2	User Application	A measure of the User Application without the boot ramfs
+PCR8	Signing Certificate	A measure of the certificate used to sign the Enclave Image File.
+You can read more about attestation for Cages here.
+
+The build command will also create two files: enclave.eif and ev-user.Dockerfile. The enclave.eif file is the image that the Cage will run in the AWS Nitro Enclave, and the ev-user.Dockerfile is the Dockerfile that was used to generate it.
+
+Deploy your Cage
+To deploy your Cage using an existing .eif run:
+
+ 
+ev-cage deploy --eif-path $EIF_PATH
+You can build a fresh .eif for a deployment by omitting the --eif-path argument. This means you can skip the ev-cage build step and deploy in one command.
+
+The CLI will track your Cage deployment. Once the deployment has stabilized, you should see a log which includes the domain for your Cage:
+
+ 
+Cage deployed successfully. Your Cage is now available at https://<cage_name>.<app_id>.cages.evervault.com
+Invoke your Cage
+You can now call your Cage over the internet! If you deployed the Evervault Hello, Cage! template, you can use the following cURL command to try it out:
+
+ 
+curl https://<cage_name>.<app_uuid>.cages.evervault.com/hello -H "API-Key: <API_KEY>" -k
+You should now see an echo response from your Cage:
+
+ 
+{ "response": "Hello! I'm writing to you from within an enclave" }
+The Evervault Node and Python SDK includes support for attesting all connections to your Cages automatically.
+
+Reference
+cage.toml
+Cages allows configuration to be embedded within the source code, so it is easily attestable and can't be tampered with. Simply include a cage.toml file in the root of your repository and Evervault will automatically include it at build time.
+
+The cage.toml can be used to configure rules such as network egress and debug mode. It also includes dynamic attestation measures so each time your Cage is built, the PCR measures can be verified by comparing the result of the attestation with the measures included in Evervault's TLS attestation.
+
+The format of your cage.toml is as follows:
+
+ 
+# The name of your Cage
+name = "hello-cage"
+# The ID of your Cage
+uuid = "<YOUR_CAGE_ID>"
+# The ID of the Evervault App which is hosting the Cage
+app_uuid = "<APP_ID>"
+# The ID of the Evervault Team which owns the App
+team_uuid = "<TEAM_ID>"
+# Whether `debug` mode should be enabled. 
+# Logs are only available in `debug` mode.
+debug = true
+# Whether api key auth is enabled for the Cage
+api_key_auth = true
+# Whether transaction logging is enabled for the Cage.
+# Note: Requires TLS Termination to be enabled
+trx_logging = true
+# Turn off TLS Termination with certs signed by Evervault Root CA.
+# Note: you will have to handle TLS termination within your process.
+disable_tls_termination = true
+# The path to your Cage's `Dockerfile`
+dockerfile = "Dockerfile"
+# Whether or not to enable outbound network requests from your Cage
+# If enabled, the networking layer will be bundled at build time
+[egress]
+enabled = true
+destinations = ["*.evervault.com"]
+ports = ["443"]
+# The path to the signing key and certificate for your Cage
+[signing]
+certPath = "~/.ev/cages/cert.pem"
+keyPath = "~/.ev/cages/key.pem"
+TLS Termination
+TLS termination is enabled by default on your Cage. When enabled, any requests into your Cage will terminate TLS within the enclave using a cert signed by the Evervault Root CA. With TLS termination enabled, you will have access to features like automatic field decryption, authentication using your Evervault API Key, and transaction logging. You can disable TLS termination by setting disable_tls_termination=true in your cage.toml configuration file. If you disable TLS termination, you will need to handle it within your process.
+
+Automatic Decryption
+When TLS termination is enabled on your Cage, any Evervault-encrypted strings will be decrypted automatically before being sent to your process. The fields can then be treated as plaintext within your Cage.
+
+Encryption API
+Evervault exposes a simple encryption API within Cages which allows you to encrypt and decrypt Evervault-encrypted strings. It also allows you to manually retrieve an AWS Nitro Enclaves Attestation Document if you wish to implement your own attestation protocol.
+
+Encrypt data
+To encrypt data, you can make a request to /encrypt.
+
+/encrypt
+{ "foo": "bar" }
+RESPONSE
+{ "foo": "ev:encrypted_string..." }
+Decrypt
+To decrypt data you can make another request to /decrypt.
+
+/decrypt
+{ "foo": "ev:encrypted_string..." }
+RESPONSE
+{ "foo": "bar" }
+Attestation Document
+To fetch the attestation document for the cage, you can make a request to /attestation-doc
+
+/attestation-doc
+{ "challenge": "abc", "nonce": "123" }
+RESPONSE
+Attestation Document as Base64-encoded binary blob
+Default port
+By default, traffic within the Cage will be forwarded to port 8008 on loopback. This can be configured by supplying an EXPOSE directive in your Dockerfile.
+
+Note that several ports are reserved within the Cage.
+
+Reserved Ports
+Certain ports are reserved within Cages for internal services. In certain cases, these ports are only reserved when a feature is enabled. The reserved ports are as follows:
+
+Port	Reason	Corresponding Feature
+9999	Used by the Encryption API	—
+53	Used to proxy egress DNS calls	egress — can be disabled in the cage.toml
+443	Used to proxy egress TCP traffic	egress — can be disabled in the cage.toml
+Environment Variables
+Environment Variables can be configured using the UI or CLI. Secrets can be encrypted on creation and will be made available to your Cage environment in plaintext on startup. When you create or modify an Environment Variable for your cage, it will only take effect once you redeploy the cage.
+
+Add a secret value
+ 
+ev-cage env add --key ACME_API_KEY --value secretvalue --secret
+Add a non secret value
+ 
+ev-cage env add --key REGION --value europe
+HTTP Transaction Logging
+When TLS Termination is enabled on your cage, you can enable HTTP Transaction logging which will propagate request logs to the Evervault Activity Screen within the dashboard. These logs contain HTTP Status Codes, Methods, Timestamps etc. This can be configured within the cage toml by setting trx_logging = false (Default is true).
+
+A unique ID is also appended to each request. This ID can be found in the response headers under x-evervault-cage-ctx. You can then search for this ID in the Activity Screen.
+
+Debug Mode
+If you want to test your Docker Image in a Cage and see the output, you can run your Cage in debug mode. Logs will be emitted and viewable through the Evervault Dashboard, or by using the ev-cage logs command in the CLI.
+
+When running a Cage in debug mode, the attestation measure returned will consist entirely of zeroes. This means that a Cage in debug mode is not attestable.
+
+Egress
+By default there is no networking out of a Cage. If you wish to make requests out of the Cage, turn on egress by including --egress on Cage init or update the cage.toml. The default egress port is on port 443 to support typical HTTPS traffic, if you are making requests to hosts on different ports you will need to specify them in the cage.toml or with --egress-ports 443,465,5432
+
+You can also configure the allowed domains that requests out of the Cage should be allowed to with --egress-destinations. The list will be enforced in both the data plane and the control plane, requests to domains that are not explicity allowed will fail at the beginning of the TLS handshake. You can specify exact domains or wildcards to allow all subdomains, for example cages.evervault.com or *.evervault.com. The default behaviour is to allow requests to any domain but we recommend restricting them in production environments.
+
+Egress will only work out of the enclave if the connection uses TLS.
+
+Authentication
+Cages expect an Evervault API key in an api-key request header by default. This can be disabled if you wish to implement your own form of authentication to the Cage.
+
+Cages CLI Reference
+Manage Cages from your terminal.
+
+Build
+The build command mirrors the docker build command but produces an Enclave Image File (EIF) as output instead of a Docker image. The build command requires a cage.toml to be available when creating an Enclave Image File. This can be generated using the ev-cage init command.
+
+ 
+ev-cage build [OPTIONS] [CONTEXT_PATH]
+Args
+CONTEXT_PATH
+Path to use for Docker context, defaults to the current directory.
+
+Options
+c, --configDefaults to ./cage.toml
+Path to the cage.toml file.
+
+f, --fileDefaults to ./Dockerfile
+Path to the Dockerfile to use for the Cage.
+
+o, --output
+Path to directory to save the processed Dockerfile and EIF.
+
+--private-key
+Private key to be used when signing the EIF.
+
+--signing-cert
+Certificate corresponding to the private key.
+
+--build-arg
+Build time arguments to provide to Docker.
+
+New Certificate
+Create a new Cage signing certificate and private key.
+
+ 
+ev-cage cert new [OPTIONS]
+Options
+o, --output
+Path to the directory where the credentials will be saved. Defaults to the current directory.
+
+--subj
+Defining the certificate’s distinguished name e.g. /CN=EV/C=IE/ST=LEI/L=DUB/O=Evervault/OU=Eng. If not given a generic Cage subject is given.
+
+Upload Certificate Metadata
+Upload a signing certificate's metadata to the Evervault API. This cert can then be used specified for locking deployments.
+
+ 
+ev-cage cert upload [OPTIONS]
+Options
+p, --cert_path
+Path to directory where the signing cert is. Defaults to the path specified in ./cage.toml
+
+-c --config
+Path to cage.toml config file. Default: ./cage.toml
+
+Lock Certificates
+Interactive prompt to lock Cage deployment to specific signing certificates. A Cage deployment will fail if the signing certificate used is not in specified locked certs. If no certificates are locked to a Cage, it can be deployed with any certificate.
+
+ 
+ev-cage cert lock [OPTIONS]
+Options
+-c --config
+Path to cage.toml config file. Default: ./cage.toml
+
+Delete
+Delete the Cage defined in a given cage.toml.
+
+ 
+ev-cage delete [OPTIONS]
+Options
+c, --configDefault to ./cage.toml
+Path to the cage.toml config file.
+
+--cage-uuid
+Uuid of the Cage to delete
+
+--background
+Perform the Cage deletion in the background
+
+Deploy
+Deploy the Cage defined in your cage.toml file. By default, the deploy command will ignore any prebuilt EIFs and begin a fresh Cage build. You can prevent this by providing a path to an existing EIF using the --eif-path option.
+
+ 
+ev-cage deploy [OPTIONS] [CONTEXT_PATH]
+Args
+CONTEXT_PATH
+Path to use for the Docker context. Defaults to the current directory.
+
+Options
+c, --configDefault: ./cage.toml
+Path to cage.toml config file
+
+--eif-path
+Path to EIF for the Cage. Will skip building if EIF is provided.
+
+f, --fileDefault: ./Dockerfile
+Path to Dockerfile for Cage. Will override any Dockerfile specified in the cage.toml file
+
+--private-key
+Private key used to sign the Enclave Image File.
+
+--quite
+Disable verbose output
+
+--signing-cert
+Certificate used to sign the Enclave Image File.
+
+--build-arg
+Build time arguments to provide to Docker
+
+Describe
+Get the PCRs of an existing EIF.
+
+ 
+ev-cage describe [OPTIONS] [EIF_PATH]
+Args
+EIF_PATHDefault: ./enclave.eif
+Path to the EIF to describe.
+
+Options
+h, --help
+Print help information
+
+--json
+Toggle JSON output for stdout
+
+v, --verbose
+Toggle verbose output
+
+Init
+Create a Cage and initialize a cage.toml in the current directory.
+
+ 
+ev-cage init [OPTIONS] --name <CAGE_NAME>
+Options
+--debug
+Debug setting for the Cage. When debug is enabled, you can access logs from within the Enclave.
+
+--egress
+Flag to enable network egress from your Cage, default egress port is 443
+
+--egress-ports
+Comma separated list of ports to allow egress on
+
+--egress-destinations
+Comma separated list of domains to allow egress to, default is all (*)
+
+f, --file
+Dockerfile to build the cage
+
+-generate-signing
+Flag to enable cert generation during initialization. This will use the default certificate.
+
+h, --help
+Print help information
+
+--json
+Toggle JSON output for stdout
+
+--name
+Name of Cage to deploy
+
+o, --outputDefault: ./
+Directory to write the cage.toml to. Defaults to the current directory.
+
+--private-key
+Path to the signing key to use for the Cage.
+
+--signing-cert
+Path to the signing cert to use for the Cage
+
+v, --verbose
+Toggle verbose output
+
+--disable-api-key-auth
+Turn off API key authentication in the Cage.
+
+List Cages
+List your Cages
+
+ 
+ev-cage list cages [OPTIONS]
+Options
+h, --help
+Print help information
+
+--json
+Toggle JSON output for stdout
+
+v, --verbose
+Toggle verbose output
+
+List Deployments
+List the deployments for your Cage.
+
+ 
+ev-cage list deployments [OPTIONS] --cage-uuid <CAGE_ID>
+Options
+--cage-uuid
+The Cage ID to get deployments for.
+
+h, --help
+Print help information.
+
+--json
+Toggle JSON output for stdout.
+
+v, --verbose
+Toggle verbose output.
+
+Add Environment Variable
+Add environment variable to be used in a Cage.
+
+ 
+ev-cage env add [OPTIONS] --key <ENV_KEY> --value <SECRET_VALUE>
+Flags
+--keyREQUIRED
+The name of the environment variable.
+
+--valueREQUIRED
+The value for the environment variable.
+
+Options
+-h, --help
+Print help information.
+
+--secret
+Encrypt the environment variable.
+
+--curve
+Curve to use for encryption. If none is provided the default is secp256r1.
+
+secp256r1 (alias: nist)
+secp256k1 (alias: koblitz)
+Delete Environment Variable
+Permanently delete a environment variable from the Cage environment.
+
+ 
+ev-cage env delete --key <ENV_KEY>
+Flags
+--keyREQUIRED
+The name of the environment variable.
+
+Get Environment Variables
+Get the environment variables in json format.
+
+ 
+ev-cage env get
+Encrypt String
+Encrypt a string that can be decrypted in your Cage.
+
+ 
+ev-cage encrypt [OPTIONS] <VALUE>
+Flags
+--valueREQUIRED
+The value to encrypt.
+
+Options
+-h, --help
+Print help information.
+
+--curve
+Curve to use for encryption. If none is provided the default is secp256r1.
+
+secp256r1 (alias: nist)
+secp256k1 (alias: koblitz)
+FAQ
+How does attestation work with Cages?
+Evervault Cages abstract away the complexity of implementing and verifying attestation with your Secure Enclaves. Cages embed the attestation flow in the TLS handshake, which is performed every time you invoke a Cage.
+
+TLS Attestation
+When you connect to a Cage, your client performs a standard TLS handshake with the enclave. Evervault automatically handles all load balancing between enclaves at the network layer.
+
+Each Cage provisions its own self-signed TLS certificate, with the AWS Nitro Attestation Document embedded within the certificate.
+
+When a client connects to the enclave, it can verify the attestation before completing the TLS handshake. By default, the Evervault server-side SDKs include functionality to verify your Cage's attestation out-of-the-box.
+
+How large can a Cage be?
+The current limit for Cages is 16 vCPUs and 64 gigabytes of RAM.
+
+Enclaves use a RAM-based filesystem. This means that the memory allocated to your Cage is used for both storage and RAM.
+
+Cages and Evervault Encryption
+Evervault Cages allow you to process data encrypted using Evervault Encryption. By default, TLS termination is handled automatically within your Cage, and encrypted data is automatically decrypted before it is passed to your application.
+
+Can I run a Cage on my own infrastructure?
+Evervault Cages are managed and run by Evervault on our infrastructure. A major advantage of using Cages is that the burden of hosting and scaling all of the infrastructure necessary to run Secure Enclaves is handled by Evervault.
+
+Evervault running your Cage doesn't weaken the security guarantees provided by Secure Enclaves, thanks to attestation. You are still provided with the attestation measure at build-time and can verify that these haven't been tampered with — all within the TLS handshake.
+
+Can I run multiple instances of a Cage?
+Yes! Cages are deployed on two separate EC2 instances split between two Availability Zones in a region for greater resiliency. The number of instances running, and the regions they run in will soon be made configurable.
+
+Best Practices Building with Cages
+Cages are designed to be flexible to fit your development process. Here are a few best practices to set you up for success.
+
+Writing the Dockerfile
+Since Cages are built using Docker, a good place to start is making sure that you are formatting your Dockerfile correctly.
+
+First you need to use the FROM command which will create a layer from the Docker image you wish to use. It’s best to use one of the container images available on Docker Hub to ensure you are using a trusted source. You can also opt for using the slim version of the container which can help reduce the image size, however the slim versions may not contain all of the common packages in the default tag.
+
+ 
+FROM node:16-alpine3.16-slim
+Next you will need to   any files from your local source to the filesystem of the container. It’s best to use absolute paths in the Dockerfile. When your Docker container is converted to an Enclave, your commands might not be run in the directory you expect them to be, so it is safer to reference your files as absolute paths.
+
+ 
+  ./index.js /index.js
+  ./package.json /package.json
+  ./package-lock.json /package-lock.json
+Make sure that you are exposing the non-reserved port you want to listen on since that is where traffic within the Cage will be forwarded. The Cages documentation uses PORT 8008 as an example, but this can be any available port that you define.
+
+ 
+EXPOSE 8008
+Here are some examples of what your Dockerfile might look like.
+
+Node.js
+
+ 
+FROM node:16-alpine3.16
+  ./index.js /index.js
+  ./package.json /package.json
+  ./package-lock.json /package-lock.json
+EXPOSE 8008
+RUN npm i
+ENTRYPOINT ["node", "/index.js"]
+Java
+
+For Java and other compiled languages, you may need to use a multi-stage build that involves first creating a build stage and then a package stage.
+
+ 
+# Build stage
+FROM maven:3.5-jdk-8 AS build  
+  src /usr/src/app/src  
+  pom.xml /usr/src/app  
+RUN mvn -f /usr/src/app/pom.xml clean package
+# Package stage
+FROM gcr.io/distroless/java  
+  --from=build /usr/src/app/target/helloworld-1.0.0-SNAPSHOT.jar /usr/app/helloworld-1.0.0-SNAPSHOT.jar  
+EXPOSE 8080  
+ENTRYPOINT ["java","-jar","/usr/app/helloworld-1.0.0-SNAPSHOT.jar"]
+Ruby
+
+ 
+FROM ruby:3.0
+RUN bundle config --global frozen 1
+  ./app.rb /app.rb
+  ./Gemfile /Gemfile
+  ./Gemfile.lock /Gemfile.lock
+EXPOSE 8008
+RUN bundle install
+  . .
+ENTRYPOINT ["ruby", "app.rb"]
+Docker will then build images by reading the instructions from your Dockerfile. The default instance size supports up to 2GB Docker images.
+
+You can check the size of your Docker image using the docker inspect command
+
+ 
+docker inspect [OPTIONS] NAME|ID [NAME|ID...]
+Run Your Server Locally with Docker
+One helpful step you can take is to try containerizing your application before deploying the container inside a Cage. If it can run with Docker, it should be able to run in a Cage, and it will help you debug errors that may exist from the Docker build before you attempt to run it in a Cage.
+
+Once you have your app ready including the Dockerfile, navigate to the directory containing the Dockerfile, then run the following command:
+
+ 
+docker build -t your-image .
+Next, you can start the container using docker run along with the name of your image and the container port that you exposed in the Dockerfile mapped to the host port.
+
+ 
+docker run -p 8080:8080 your-image
+Now if you go to the host port http://localhost:8080 you should see your app running. You can also check the Docker Desktop app or CLI to confirm that the container is running.
+
+Package Installation
+Some of the instructions in your Dockerfile will install required packages. You can use whichever package manager makes sense for your application.
+
+In some cases, you may want to use a manifest file that will contain the required packages and their versions, like a package.json for Node or requirements.txt for Python.
+
+For Python specifically, it can also be helpful to use a virtual environment. You can run the virtual environment within the container and then install the packages within the environment. This will also help with minimizing image size.
+
+Here is an example:
+
+ 
+FROM python:3.8-slim
+RUN python3 -m venv /opt/venv
+  requirements.txt requirements.txt
+RUN /opt/venv/bin/pip install -r requirements.txt 
+  app.py /app.py
+EXPOSE 8008
+ENTRYPOINT ["/venv/bin/python", "/app.py"]
+Using the Encrypt and Decrypt Endpoints
+By design, data that is encrypted with Evervault that passes into the Cage will automatically decrypt. There is no further action required to decrypt and start using the data.
+
+You also can utilize /encrypt and /decrypt endpoints that are exposed on a mini app listening on port 9999 within the enclave. These are not available outside of the enclave, so if you have publicly available endpoints within your app that use the same naming, there should not be any conflict.
+
+These endpoints are available for any Cage, but you will need to define them within your application. Here is an example of how you might implement it in Node.
+
+ 
+app.all("/encrypt", async (req, res) => {
+  try {
+    const result = await axios.post('http://127.0.0.1:9999/encrypt', req.body);
+    res.send({ ...result.data });
+  } catch (err) {
+    console.log("Could not encrypt body", err);
+    res.status(500).send({msg: "Error from within the cage!"})
+  }
+});
+To encrypt data, you can make a request to /encrypt and pass in any data that you wish to encrypt as JSON.
+
+ 
+curl -X POST \
+-H "API-Key: <API_KEY>" \
+-H 'Content-Type: application/json' \
+-d '{ "foo": "bar" }' \
+https://<cage_name>.<app_uuid>.cages.evervault.com/encrypt  -k
+The purpose of the decryption API is to offer flexibility with applications built inside the enclave. Examples could be if you need to upload a list of large files of encrypted data to be decrypted on start up of the enclave or a process that pulls in encrypted data from an external source.
+
+Another point to note is that when TLS termination is turned off in the data plane, it’s not possible for the request to be scanned for encrypted strings. This is another instance where the Decrypt API could be used.
+
+Here is an example of how to implement the Decrypt API.
+
+ 
+app.all("/decrypt", async (req, res) => {
+  try {
+    const result = await axios.post('http://127.0.0.1:9999/encrypt', req.body);
+    res.send({ ...result.data });
+  } catch (err) {
+    console.log("Could not decrypt body", err);
+    res.status(500).send({msg: "Error from within the cage!"})
+  }
+});
+To decrypt data you can make another request to /decrypt and pass in the encrypted string as JSON.
+
+ 
+curl -X POST \
+-H "API-Key: <API_KEY>" \
+-H 'Content-Type: application/json' \
+-d '{ "foo": "bar" }' \
+https://<cage_name>.<app_uuid>.cages.evervault.com/decrypt  -k
+Should you need to make outbound network calls from within an enclave you can make egress network calls. You will want to disable this at build time in order to prevent unauthorized data from flowing in or out of the Cage. While these options can be helpful for development, you will want to think about which ones should be disabled in production to reduce the attack surface.
+
+Checking Attestation
+The Cage Attestation measures are embedded in the TLS extensions within the TLS handshake. Evervault SDKs can be used to validate the PCRs returned in the handshake. You may use the Python or Node.js SDKs which have a function that will allow your application to attest all TLS connections to Evervault Cages.
+
+Node.js
+
+ 
+const encrypted = await evervault.encrypt("Your Data");
+await evervaultClient.enableCagesBeta(
+	{ 'my-cage': [
+		{ pcr8: 'PCR8FULLHASH' }, 
+		{ pcr0: 'PCR0FULLHASH' },
+]});
+const response = await axios.post(
+  'https://my-cage.my-app.cages.evervault.com',
+  encrypted
+);
+This takes in a set of expected PCRs and validates they are returned in the TLS handshake of requests sent to the Cage. You can pass in a single PCR value as an object or multiple PCR values as an array of objects.
+
+Python
+
+ 
+attested_session = evervault.cage_requests_session({ 
+  'my-cage': [{ 'pcr_8': 'PCR8FULLHASH' }, { 'pcr_0': 'PCR0FULLHASH' }]  
+})
+attested_session.post(
+    'https://my-cage.my-app.cages.evervault.com', 
+    data=sensitive_payload
+)
+This is the same behavior in Python. You can pass in a single PCR value as a dictionary or multiple PCR values as a list of dictionaries.
+
+Another way is to use openssl using this command:
+
+ 
+openssl s_client -connect ${cage-name}.${cage-app}.cages.evervault.com:443 | openssl x509 -noout -text | grep DNS:
+You can then validate it locally using the ev-cage attest command in the CLI. This will validate that the PCRs in the cage.toml file match the PCRs returned in the handshake.
+
+To get the attestation doc itself, you can expose the available endpoint. When running your Cage in debug mode, every value in the attestation document returned will be 0, so if you need to check the attestation measures do not use the --debug flag when initializing the Cage.
+
+ 
+app.all("/attestation-doc", async (req, res) => {
+  try {
+    const result = await axios.post('http://127.0.0.1:9999/attestation-doc', req.body);
+    res.send({ ...result.data });
+  } catch (err) {
+    console.log("Could not retrieve doc.", err);
+    res.status(500).send({msg: "Error from within the cage!"})
+  }
+});
+Then make a request to the Cage using the below command.
+
+ 
+curl -X POST \
+-H "API-Key: <API_KEY>" \
+https://<cage_name>.<app_uuid>.cages.evervault.com/attestation-doc  -k
+Utilizing Logging
+To turn logging off or on, you will need to define trx_logging = true or trx_logging = false in your cage.toml. You can also leave it undefined and it will be turned on because the default state is set to true.
+
+From there you should be able to see all of your calls to the Cage in the Cages Dashboard under Activity.
+
+Screenshot of the Cages Activity Log
+
+You can also find a unique ID from the request and can use that ID to search for a specific call in case you have many calls to look through.
+
+Screenshot of the Cages Activity Log with ID
+
+IP Addresses
+There are two ways to see the original IP on the connection.
+
+When using TLS Termination, the IP will be included in the HTTP X-Forwarded-For header.
+
+If you have TLS Termination disabled, you can receive the client IP via proxy protocol by setting the FORWARD_PROXY_PROTOCOL environment variable in your Cage.
+
+Evervault Inputs makes it easy to collect cardholder data securely in the browser with our client-side SDKs.
+
+Evervault Inputs is served within an iFrame retrieved directly from Evervault’s PCI-compliant infrastructure, and all operations on card data (such as validity checks) also occur within the Evervault environment.
+
+Adopting this approach for card data collection can reduce your PCI DSS compliance scope to the simplest form (SAQ A Control Set), once integrated correctly.
+
+Evervault Inputs is fully customizable and can be updated to match your design system with simple CSS configuration.
+
+Getting Started
+Get up and running with Evervault Inputs in less than 5 minutes.
+
+In this example, we will use one of our client-side SDKs. Before starting this tutorial, you'll need to sign up for an Evervault account and create an app.
+
+Install the Evervault SDK
+To use Evervault Inputs, you will need to install either our JavaScript SDK or React.js SDK.
+
+React.js
+JavaScript
+ 
+# Using npm
+npm install @evervault/react
+# Using yarn
+yarn add @evervault/react
+Integrate Evervault Inputs
+Once installed, initialize the JavaScript SDK or React.js SDK with your Team ID and App ID, both of which can be found in the Evervault Dashboard.
+
+Integrating Inputs is then as easy as creating an element in HTML or using the <EvervaultInputs /> component in React.js.
+
+React.js
+JavaScript
+ 
+// Use the EvervaultProvider component as a provider for your app.
+import { EvervaultProvider } from '@evervault/react';
+import ChildComponent from '../ChildComponent';
+export default function App() {
+  return (
+    <EvervaultProvider teamId={'<TEAM_ID>'} appId={'<APP_ID>'}>
+      <ChildComponent />
+    </EvervaultProvider>
+  );
+}
+// Once you've included the EvervaultProvider, you can then use the `<EvervaultInputs />` components to render
+import { EvervaultInput } from '@evervault/react';
+import { useState, useEffect } from 'react';
+export const ChildComponent = () => {
+  const [encryptedCardDetails, setEncryptedCardDetails] = useState(undefined);
+  useEffect(() => {
+    if (!encryptedCardDetails) return;
+    console.log(encryptedCardDetails);
+  }, [encryptedCardDetails]);
+  return <EvervaultInput onChange={setEncryptedCardDetails} />;
+};
+Encrypted card details will be returned to you in JSON format, so you can then pass it on to your backend without ever handling cardholder data in plaintext — reducing your PCI DSS compliance scope to the simplest form.
+
+The output JSON will be structured like this:
+
+ 
+{
+  "card": {
+    "type": "visa_credit",
+    "number": "ev:encrypted_string",
+    "cvc": "ev:encrypted_string",
+    "expMonth": "01",
+    "expYear": "23"
+  },
+  "isValid": true,
+  "isPotentiallyValid": true,
+  "isEmpty": false,
+  "error": {
+    "type": "invalid_pan",
+    "message": "The credit card number you entered was invalid"
+  }
+}
+Themes
+Inputs can be customized to match your brand’s design system. Both the JavaScript and React SDK allow additional configuration for styling both the Evervault Inputs container as well as each <input> within the container.
+
+React.js
+JavaScript
+ 
+<EvervaultInput config={{
+	theme: "minimal",
+	height: "40px"
+}} />
+Supported settings
+When passing a config object for customizing Inputs, the following key-value pairs are supported.
+
+themeString
+The base styling for Inputs. Currently supports default, minimal and material.
+
+heightString
+The height of the Evervault Inputs iframe.
+
+primaryColorString
+The main theme color.
+
+labelColorString
+The color CSS property applied to the input labels.
+
+inputTextColorString
+The color CSS property applied to inputs.
+
+placeholderColorString
+The color CSS property applied to the ::placeholder CSS pseudo-element for inputs.
+
+inputBorderColorString
+The border-color CSS property applied to inputs.
+
+inputBackgroundColorString
+The background color CSS property applied to inputs.
+
+inputBorderRadiusString
+The border-radius CSS property applied to inputs.
+
+inputHeightString
+The height CSS property applied to inputs.
+
+cardNumberLabelString
+The label for the card number input
+
+expirationDateLabelString
+The label for the expiration date input
+
+securityCodeLabelString
+The label for the security code input
+
+expirationDatePlaceholderString
+The placeholder for the expiration date input
+
+invalidCardNumberLabelString
+The message shown on an invalid card number
+
+invalidExpirationDateLabelString
+The message shown on an invalid expiration date
+
+invalidSecurityCodeLabelString
+The message shown on an invalid security code
+
+fontUrlString
+Load a custom font with the Google Fonts API
+
+fontFamilyString
+Set the font-family for the fontUrl
+
+inputFontSizeString
+Set the font-size property of the input attribute
+
+inputBoxShadowString
+Set the box-shadow property of the input attribute
+
+labelFontSizeString
+Set the font-size property of the label attribute
+
+labelWeightString
+Set the font-weight property of the label attribute
+
+disableCVVString
+Will remove the CVV field from Inputs and show only the card number and expiry fields
+
+Default theme
+Set theme to default to use the Default theme for Inputs.
+
+
+Minimal theme
+Set theme to minimal to use the Minimal theme for Inputs.
+
+
+Material theme
+Set theme to material to use the Material theme for Inputs.
+
+
+Localization
+The iFrame can be localized on initialization by providing a set of labels in the config. The labels can then be updated as required using the setLabels method in the JavaScript SDK or React.js SDK.
+
+Security
+Evervault Inputs is served through an iFrame hosted on Evervault's compliant (PCI DSS Level 1) infrastructure.
+
+Evervault is responsible for the security of the servers providing the form, meaning your cardholder data environment is reduced to the smallest size possible.
+
+All credit card data is encrypted client-side using the Web Crypto API, so no cardholder data leaves your user's device without being encrypted using Evervault Encryption.
+
+Client-side
+You can use our client-side SDKs to encrypt data on the client-side or collect create card data with Inputs.
+
+Javascript
+Encrypt data and embed inputs with Javascript.
+
+React
+Encrypt data and embed inputs with React.
+
+Server-side
+You can use our server-side SDKs to Encrypt data server-side, Invoke Functions and Decrypt data through Outbound Relay.
+
+Note
+
+Encrypting data with our server-side SDKs instead of Inbound Relay may expose you to greater compliance burden because plaintext data touches your server before it is encrypted.
+
+Instead you can:
+
+Use an Inbound Relay to encrypt data before it reaches your server.
+Use our client-side SDKs to encrypt data before sending it to your server.
+CLI
+The Evervault CLI allows you to test and manage your Evervault integration from your terminal.
+
+Node.js
+Encrypt data server-side, invoke Functions and setup Outbound Relays with Node.
+
+Python
+Encrypt data server-side, invoke Functions and setup Outbound Relays with Python.
+
+Ruby
+Encrypt data server-side, invoke Functions and setup Outbound Relays with Ruby.
+
+Java
+Encrypt data server-side, invoke Functions and setup Outbound Relays with Java.
+
+PHP
+Encrypt data server-side, invoke Functions and setup Outbound Relays with PHP.
+
+A full reference for the Evervault Command Line Interface (CLI). The Evervault CLI allows you to test and manage your Evervault integration from your terminal.
+
+Setup
+The latest version of the Evervault CLI can be downloaded and automatically installed using the following command. This command can also be used to upgrade from a previous major version of the Evervault CLI.
+
+ 
+sh <(curl https://cli.evervault.com/v3/install -sL)
+Next you’ll need to sign in. You can switch teams and apps with the team switch and app switch commands.
+
+ 
+ev login
+Authentication
+The Evervault CLI supports two main authorization methods. The ev login command logs you in to the CLI using your Evervault Account and gives you the same access as you would have through the Dashboard.
+
+The other method is API Key Authorization. It is supported on a select few commands that developers may use in CI/CD pipelines, such as ev function deploy.
+
+Global Flags
+There are some globally available flags which can be used with almost any command within the Evervault CLI.
+
+Flags
+--json
+Format any output from the CLI as JSON.
+
+--no-color
+Disable coloured output. Note: the CLI will also respect the NO_COLOR and EV_NO_COLOR environment variables to disable colour.
+
+--help
+Print the helper text for any command
+
+General
+Use these commands to manage your installation of the Evervault CLI.
+
+login
+Connect the CLI to your Evervault account by authenticating with a browser.
+
+ 
+ev login
+logout
+Log out from the Evervault CLI. This will remove all stored credentials linking the CLI to your Evervault account.
+
+ 
+ev logout
+update
+Update the Evervault CLI to the latest version. Note: The update command will not update between major versions of the Evervault CLI.
+
+ 
+ev update
+Teams
+Use these commands to manage the Teams that you’re a member of.
+
+team list
+List the teams that you are a member of.
+
+ 
+ev team list
+team switch
+Switch the currently active team in your Evervault CLI
+
+ 
+ev team switch
+Apps
+Use these commands to manage the Apps that belong to your currently selected Team
+
+app list
+List the apps in your currently selected Team.
+
+ 
+ev app list
+app switch
+Switch the currently active app in your Evervault CLI.
+
+ 
+ev app switch
+Functions
+Use these commands to manage your Functions.
+
+function deploy
+Deploy a Function using the source code of your current working directory.
+
+ 
+ev function deploy [flags]
+Your current directory needs to contain a valid function.toml . You can generate one using the ev function create-toml command.
+Your Function will use the name set in the function.toml
+By default, the CLI will wait for the Function deployment to complete. If you only want to begin the deployment and then exit, you can pass in the --background flag.
+If you want to deploy your Function in a CI pipeline, you can set the EV_API_KEY environment variable to an API key with function:deploy permissions, and pass the --api-key-auth flag.
+Flags
+--api-key-auth
+Authenticate the deployment using an API key. The EV_API_KEY environment variable must be set to an Evervault API key with function:deploy permissions.
+
+--background
+Don’t wait for the Function to complete its deployment.
+
+--quite
+Only print essential logs.
+
+function env
+Manage the environment variables of the Function in your current directory.
+
+Note: Some environment variables are reserved for our use and therefore are immutable.
+
+ 
+ev function env (get|set|delete) [flags] [options]
+Flags
+--secret
+Mark the environment variable as a secret. This encrypts it and makes it irretrievable. All secrets are decrypted when your function is run.
+
+--api-key-auth
+Authenticate the request using an API key. The EV_API_KEY environment variable must be set to an Evervault API key with function:update permissions.
+
+Options
+--name
+The name of the Function to interact with. If not given, then the CLI will look for a function.toml in the current directory.
+
+--key
+The key of the environment variable you wish to update.
+
+--value
+The value of the environment variable you wish to update.
+
+function init
+Initialize a sample “hello world” Function either in your current directory, or the directory provided
+
+ 
+ev function init [flags] [options]
+Flags
+--force
+Overwrite the existing directory at the location if it exists
+
+Options
+--dir
+The directory to initialize the function into. If not given, the Function will be created in a subdirectory of the current directory using the name of the Function.
+
+function create-toml
+Creates a starter function.toml in the current directory.
+
+Note: This command will not work in a tty environment.
+
+ 
+ev function create-toml
+function list
+Lists all of the currently selected App’s Functions.
+
+ 
+ev function list
+function delete
+Deletes a Function.
+
+ 
+ev function delete
+Flags
+--use-current-directory
+Use the function.toml in the current directory to determine which Function to delete.
+
+--api-key-auth
+Authenticate the request using an API key. The EV_API_KEY environment variable must be set to an Evervault API key with function:delete permissions.
+
+Options
+--name
+The name of the Function you wish to delete.
+
+function run
+Run a named Function from the command line using a JSON Payload.
+
+Note: This command does not encrypt your data before sending it to the Function.
+
+ 
+ev function run [flags] [options]
+Flags
+--local
+run this Function locally. Note: Must be run in the directory containing the Function.
+
+--api-key-auth
+Authenticate the request using an API key. The EV_API_KEY environment variable must be set to an Evervault API key with function:run permissions.
+
+Options
+--name
+The name of the Function you wish to invoke. If not provided the CLI will attempt to run the Function defined in a function.toml in the current working directory.
+
+--data
+The JSON Payload to send to the Function.
+
+--in
+Path to a file containing the JSON payload to send to the Function, can't be used at the same time as --data.
+
+Locally running functions can only decrypt debug encrypted strings.
+
+Relay
+Use the following commands to manage your Relays. All of the interactions with Relay through the CLI are done using a Relay configuration file, the name of this file is relay-config.json by default.
+
+Relay Configuration File
+All of the interactions with Relay through the CLI are done using a Relay configuration file, the name of this file is relay-config.json by default.
+
+Note: It is not possible to have both a destionationDomain and dnsTargets set.
+
+Examples
+A Relay on an Evervault domain with a specified destination domain:
+
+ 
+{
+  "<Relay Domain>": {
+    "destinationDomain": "<Relay Destination>",
+    "fieldsToEncrypt": [
+      {
+        "route": <The route to apply this configuration to>,
+        "method": <GET|POST|PUT|PATCH|DELETE|*>,
+        "fields": <A list of fields to encrypt. JSON Path is supported here>
+      }
+    ]
+  }
+}
+A Relay on a custom domain with specified DNS targets:
+
+ 
+{
+  "<Relay Domain>": {
+    "dnsTargets": [
+      {
+        "type": <A|CNAME>,
+        "address": <A valid hostname>
+      }
+    ],
+    "fieldsToEncrypt": [
+      {
+        "route": <The route to apply this configuration to>,
+        "method": <GET|POST|PUT|PATCH|DELETE|*>,
+        "fields": <A list of fields to encrypt. JSON Path is supported here>
+      }
+    ]
+  }
+}
+relay create
+Creates a Relay configuration file that you can push to Evervault.
+
+ 
+ev relay create [flags] [options]
+Flags
+--force
+Force the creation of the relay configuration file. If this flag is set, running the command will overwrite any existing Relay configuration file at the specified path.
+
+--dns-target
+A list of DNS targets as JSON objects for Relay to forward requests to. Each target requires 'type' and 'address' keys.
+
+Options
+--destination-domain
+A single domain for Relay to forward requests to.
+
+--custom-domain
+Your own custom domain where the Relay will be accessible.
+
+--relay-type
+Can be set to either AUTO, CUSTOM, or DNS . An AUTO relay creates a relay hosted on an Evervault domain. A CUSTOM or DNScreates a relay on one of your own domains, configured either with a static Domain target or DNS targets respectively.
+
+--file
+The destination for this Relay configuration. This is the file you will edit to configure your relay. Defaults to relay-config.json
+
+relay clone
+Copies the configuration of a deployed Relay into a Relay configuration file.
+
+ 
+ev relay clone [flags] [options]
+Flags
+--force
+Force the creation of the relay configuration file. If this flag is set, running the command will overwrite any existing Relay configuration file at the specified path.
+
+Options
+--domain
+The domain of the Relay to clone.
+
+--file
+The destination for this Relay configuration. This is the file you will edit to configure your relay. Defaults to relay-config.json
+
+relay dev
+Runs a Relay configuration locally. This command is to be used for testing Relay configurations locally and for assisting with local development using Evervault. When this command is running it listens for changes in the Relay configuration file and applies updates as the file is updated.
+
+ 
+ev relay dev [options]
+Options
+--portRequired
+The port to forward traffic to.
+
+--hostDefault: 127.0.0.1
+The host to forward traffic to.
+
+--fileDefault: relay-config.json
+The Relay configuration file to be applied to this Relay.
+
+relay push
+Push the contents of a Relay configuration file to your currently selected app on Evervault. If the relay does not yet exist it will create a new one, if it does exist then it will be updated with the parameters as specified in the Relay configuration file.
+
+Note: A summary of the changes to be performed will be displayed followed by a confirmation.
+
+ 
+ev relay push [options]
+Options
+--fileDefault: relay-config.json
+The Relay configuration file to be applied to this Relay.
+
+relay diff
+Shows the difference between the contents of your relay-config.json file and the relay actively deployed on Evervault to allow you to preview the changes that would be applied by running a relay push.
+
+ 
+ev relay diff [options]
+Options
+--fileDefault: relay-config.json
+The Relay configuration file to be applied to this Relay.
+
+relay delete
+Delete a Relay.
+
+ 
+ev relay delete [options]
+Options
+--domain
+The domain of the Relay to be deleted.
+
+relay list
+List your Relays.
+
+ 
+ev relay list
+Misc
+Additional helpful commands in the Evervault CLI.
+
+dash
+Opens the Evervault dashboard in your preferred browser.
+
+ 
+ev dash
+docs
+Opens the Evervault docs in your preferred browser.
+
+ 
+ev docs
+info
+Displays information about your current session in the Evervault CLI.
+
+ 
+ev info
+reset
+Factory reset of your Evervault CLI.
+
+ 
+ev reset
+
+Evervault Encryption
+Evervault Encryption is the encryption scheme used across all of Evervault's products. All key management and cryptographic operations take place within the Evervault Encryption Engine (E3) which runs exclusively in an AWS Nitro Enclave.
+
+By default, any data that you encrypt using Inbound Relay, Inputs or our SDKs can all be decrypted and used by all of our other products. For example, you could collect credit card data from your customers using Evervault Inputs and then perform credit card verification using Functions — without any additional configuration.
+
+Evervault takes on the responsibility for managing your encryption keys so you don't need to worry about storing them safely. We also manage key rotation and provisioning on your behalf with no additional configuration.
+
+If your infrastructure is compromised, simply rotate your API token in the Evervault Dashboard and we'll take care of the rest. Your API token doesn't contain any sensitive key material and is only used to authenticate with the Evervault Encryption Engine.
+
+Evervault Encryption Engine (E3)
+At the core of Evervault is the Evervault Encryption Engine (E3). All cryptographic operations for our hosted products (Functions, Cages, Inbound Relay and Outbound Relay) take place in E3.
+
+E3 is built on AWS Nitro Enclaves. Nitro Enclaves are Secure Enclaves backed by isolated, hardened, and highly constrained virtual machines.
+
+Using enclaves means that Evervault cannot access your data. Enclaves have no persistent storage, no interactive access, and no external networking. Root users and admin users on the parent EC2 instance cannot access or SSH into the enclave. The only way to communicate with the enclave is through the secure local channel from the parent EC2 instance attached to the enclave.
+
+Enclaves have attestation for verifying that only authorized code is running in the enclave, and to verify the enclave’s identity. Key material is only passed to E3 if it passes all attestation checks. Similarly, all other products will only interact with a fully-attested deployment of E3.
+
+Evervault Encryption Scheme
+Encryption Keys
+The current Evervault Encryption Scheme (EES) comprises two sets of keys: the App Master Key, and a public/private asymmetric key pair.
+
+App Master Key (AMK)
+When an Evervault App is created, an App Master Key (AMK) is provisioned for that App.
+
+Each AMK is generated for use with AES-256 symmetric encryption (with a 256-bit key length).
+
+We use Shamir's Secret Sharing to split the AMK into three shares with a quorum of three. Of these three shares, two are stored in separate databases on Evervault's infrastructure — encrypted using a key that is only accessible by E3’s AWS Nitro Enclave. Once these shares have been generated, the original AMK is discarded.
+
+Your API token is generated by taking the third share and offsetting it by XORing each byte of the share with randomly generated “offset bytes”, which are stored by Evervault.
+
+Evervault stores the API token encrypted in its database using AWS KMS to allow you to retrieve it using the Dashboard. Each access request is tracked and there is a full audit log of each API token decrypt operation.
+
+App Asymmetric Keypair
+Two Elliptic Curve Diffie-Hellman keypairs are generated for each App: one on the secp256r1 curve (NIST P-256) and one on the secp256k1 curve (Koblitz). Two keys are used in order to allow for complete interopability with different encryption libraries, many of which will only support a subset of all standardized elliptic curves.
+
+The private key is encrypted with the App's AMK (using AES-256), and the plaintext private key is discarded.
+
+The AMK-encrypted private key is stored in the Evervault database. Evervault never sees the private key in plaintext. The only point where the private key is accessible is within the E3 AWS Nitro Enclave.
+
+The public asymmetric key is stored in the Evervault database and is publicly available for any clients who wish to encrypt data to be processed by your App.
+
+Encryption
+Your App's ECDH public key is loaded by the Evervault SDK or by E3, which generates a new, ephemeral ECDH keypair per encryption. The SDK or E3 then derives a 32-byte (256 bit) shared secret using the App ECDH public key and the ephemeral ECDH private key.
+
+The data is then encrypted using AES-256-GCM with a 12-byte initialization vector (IV) and 16-byte auth tag. A string is generated containing the ephemeral ECDH public key, AES-encrypted data and the key IV.
+
+The plaintext AES key and the ephemeral ECDH private key are discarded.
+
+The encrypted data returned by the Evervault SDK or E3 can then stored anywhere on your infrastructure. Evervault does not store the data in any form—neither in plaintext, nor encrypted.
+
+Evervault-encrypted data is encoded using the following structure:
+
+ev:Base64(Version):[datatype:]Base64(KeyIV):Base64(ECDHPublicKey):Base64(AESEncryptedData):$
+Parameter	Description
+ev	Used so that you can easily identify Evervault-encrypted strings.
+Version	Evervault encryption version, e.g RFVC or Tk9D.
+datatype	Allows you to easily identify the type of data that was encrypted.
+KevIV	Randomly-generated Base64-encoded Initialization Vector used for AES
+ECDHPublicKey	Base64-encoded representation of the ephemeral ECDH session public key that was used to derive the shared secret AES key for the particular string.
+AESEncryptedData	The original data that has been encrypted by AES-256-GCM using the randomly generated key.
+Our data structure is designed so that you don’t need to change your database configuration or models. You can store Evervault-encrypted data in your database as you would the plaintext data.
+
+Secure Enclaves
+Overview
+A Secure Enclave — otherwise referred to as a Trusted Execution Environment (TEE) — is a highly constrained compute environment which supports cryptographic attestation of the code that it is running. They have no persistent storage, no shell access and no networking by default. They allow you to run sensitive workloads in completely segregated environments with heavily restricted external access.
+
+Evervault uses Secure Enclaves extensively throughout our stack, and they are used to secure parts of our infrastructure which handle sensitive data and key material. This includes the Evervault Encryption Engine (E3), which is powered by AWS Nitro Enclaves.
+
+Why use Secure Enclaves?
+Secure Enclaves are useful for developers who need robust security guarantees for sensitive workloads. Secure Enclaves allow developers to guarantee that their code hasn’t been tampered with by a malicious actor through attestation.
+
+Secure Enclaves provide all of the advantages of typical containerized compute environments like Amazon ECS or Kubernetes, with the added security guarantees from attestation and heavily restricted I/O (e.g. no persistent storage and no networking by default).
+
+Companies who frequently need to provide reassurance about their security posture can offload much of that responsibility to the architecture of Secure Enclaves, helping them close deals with the most security-conscious customers — without changing how they build their software.
+
+More importantly, Secure Enclaves give developers the most secure way of deploying sensitive workloads. They maximally reduce the risk exposure of data, applications, and storage from insiders and third-parties, and for this reason, they are seeing rapid adoption across security-conscious businesses, and heavy investment from cloud and hardware vendors like AWS, Google Cloud and Microsoft Azure.
+
+What is attestation?
+Attestation allows you to verify the identity of an enclave and cryptographically prove that the code running in it was written and signed by you, and hasn't been tampered with.
+
+When you deploy your code to run within a Secure Enclave, you can use a secret key to sign the code bundle at build time. Cryptographic attestation acts as an integrity check to guarantee that the code running within the enclave is the same code that was signed at build time.
+
+Typically, verifying attestation is a complex process and requires in-depth encryption knowledge to implement safely.
+
+The Nitro Hypervisor—which powers AWS Nitro Enclaves—is capable of producing an attestation document that contains details about the Secure Enclave, including the signing key, a hash of the enclave image, a hash of the parent instance ID and a hash of the ARN of the attached IAM role.
+
+What is an AWS Nitro Enclave?
+AWS Nitro Enclaves is a product from Amazon Web Services that allows you to create isolated Amazon EC2 instances with all of the security characteristics of a Secure Enclave.
+
+AWS Nitro Enclaves is available by default to customers of Amazon EC2, but building, deploying and scaling Nitro Enclaves can be a major time investment for engineering teams that have competing priorities.
+
+Building Secure Enclaves
+Normally, Secure Enclaves are difficult to build and maintain as part of a larger system, and require a large engineering lift to get started. The constrained access and I/O means you need to invest a significant amount of time to build the bridge between the Secure Enclave and the rest of your system. They also have very minimal observability, which makes it difficult to build scalable, fault-tolerant systems.
+
+Using Evervault Cages makes it easy for developers to build, deploy and scale applications running in Secure Enclaves. With Evervault Cages, you can deploy your own Docker Containers inside Secure Enclaves.
+
+Overview
+Secured by Evervault is an optional feature available to all Evervault teams.
+
+These Evervault-hosted pages confirm a team’s commitment to data security by outlining how they’ve integrated Inbound Relay.
+
+Users can reference these pages from their documentation, website, or anywhere they wish to convey their usage of Evervault.
+
+Secured by Evervault
+
+To generate a Secured by Evervault page, from the Dashboard:
+
+Navigate to Settings, then General
+Toggle the Generate ‘Secured by Evervault’ page to the enabled state
+Copy the generated URL
+Badges
+Add an Evervault badge to your website footer to show your customers & users that you use Evervault to encrypt their data. Click the badges to copy the embed code.
+
+Elliptic Curve Support
+Evervault currently supports two elliptic curves. The first is the secp256k1 curve (also known as the bitcoin curve or the koblitz curve) and the second is the secp256r1 curve (also known as the NIST P256 curve or the prime256v1 curve).
+
+The main difference is that the secp256k1 curve is a Koblitz curve, while the secp256r1 curve is not. Koblitz curves are known to be a few bits weaker than other curves, but since we are talking about 256-bit curves, neither is broken in "5-10 years" unless there's a breakthrough.
+
+The other difference is how the parameters have been chosen. For the secp256r1 curve they are supposedly from random numbers, however, it is impossible to prove that's really the case. See these slides from Bernstein and Lange for an easily understandable treatment.
+
+The secp256k1 curve, on the other hand, has had its parameters chosen relatively rigidly.
+
+It's also important to note that the secp256k1 curve is a pure SECG curve, while the secp256r1 curve is a so-called NIST curve. NIST curves are more widely used and have received more scrutiny than other SECG curves.
+
+The bottom line is that both curves are secure and have no known weaknesses. We're providing our users with the choice so they can decide what's best for them. Our SDKs default to the secp256k1 curve but you can view our SDK references to learn how to configure the secp256r1 curve.
+
+API Keys
+Evervault provides a secure and easy-to-use authentication mechanism for APIs using API keys. These keys authenticate API requests by passing them in HTTP headers or as a parameter to the Evervault SDKs.
+
+API keys can be created and managed on a per-app basis in the Evervault Dashboard, and can be scoped to control access to specific resources and services, ensuring that your API keys only have access to the resources they need.
+
+Here are some examples of what API keys can be used for:
+
+Create an API key to run a specific function
+Create an API key to decrypt data sent to a specific domain using Outbound Relay
+Create an API key to deploy functions
+…
+Create an API Key
+API keys are an important security mechanism for authenticating API requests. Evervault makes it easy to create and manage them.
+
+Create an API Key
+
+To create an API key, follow these steps:
+
+Sign in to the Evervault dashboard.
+Select the app you want to create an API key for.
+Go to the app settings.
+Go to the "Scoped API Keys" section.
+Click "Create Key".
+Select the actions and resources the API key can access.
+Click "Save".
+Store the API key securely in your application.
+The plaintext value of an API key can only be fetched once when it is created, so it's essential to store and manage them securely to ensure the integrity of your Evervault account.
+
+Manage existing API Keys
+API keys can be updated and revoked in the Evervault dashboard. This allows you to ensure that your API keys are secure and that they only have access to the resources they need. To edit an API key, follow these steps:
+
+Sign in to the Evervault dashboard.
+Select the app containing the API key you want to update.
+Go to the app settings (App Settings tab).
+Go to the "Scoped API Keys" section.
+Click on the 3 dots (…) button next to the API key you want to revoke. Then click “Edit Key”.
+Update the actions and resources the API key can access.
+Click "Save".
+Edit an API Key
+
+Rotate an API Key
+To maintain the security of your Evervault account, it's important to regularly rotate your API keys. To rotate a key, you can create a new scoped key with the same permissions as the old key. Once the new key is in use, you can remove the old key from your account. This ensures that any potential security vulnerabilities associated with the old key are eliminated, while still allowing your application to function properly with a new key.
+
+Revoke an API Key
+To revoke an API key, follow these steps:
+
+Sign in to the Evervault dashboard.
+Select the app containing the API key you want to revoke.
+Go to the app settings (App Settings tab).
+Go to the "Scoped API Keys" section.
+Click on the 3 dots (…) button next to the API key you want to revoke. Then click “Delete Key”.
+Confirm that you want to revoke the API key.
+API Key permissions
+API key permissions determine what actions and resources an API key can access. This ensures that API keys only have access to the resources they need, improving the security of your Evervault account.
+
+The following table contains all the available API key permissions:
+
+Action	Description	Resources
+Encrypt	Encrypt data — All API keys can be used to encrypt data. This permission is available by default and can’t be removed.	
+Functions Deploy	Deploy a function using the CLI. If a function is deployed for the first time using the CLI, the permission is also required.	All or any Functions
+Functions Create	Create a function using the Evervault CLI	
+Functions Run	Run a function	All or any Functions
+Functions Create Run Token	Create a function run token	All or any Functions
+Functions Create	Create a function using the Evervault CLI	
+Functions Update	Update a function (e.g. environment variables, etc.) using the Evervault CLI	All or any Functions
+Functions Delete	Delete a function using the Evervault CLI	All or any Functions
+Functions List	List all functions using the CLI	
+Functions Read	Get information about a function using the CLI	All or any Functions
+Cages Create	Initialize a cage using the Evervault Cage CLI	
+Cages Deploy	Deploy a new version of a cage using the Evervault Cage CLI	All or any Cages
+Cages Invoke	Send an authenticated request to a cage using the api-key header.	All or any Cages
+Cages Create Secret	Add an Environment Variable to a cage using the Evervault Cage CLI	All or any Cages
+Cages Delete Secret	Delete an Environment Variable from a cage using the Evervault Cage CLI	All or any Cages
+Cages Delete	Delete a cage using the Evervault Cage CLI	All or any Cages
+Cages List	List Cages for an app using the Evervault Cage CLI	
+Cages Read	Used for any read operations using the Evervault Cage CLI	All or any Cages
+Outbound Relay Proxy	Share encrypted data with third-party APIs using Outbound Relay.	All or any Outbound Destinations
+Inbound Relay mTLS Proxy	Authenticate mTLS requests with Inbound Relay, This permission is not required when using non-mTLS Inbound Relays.	All or any Inbound Relays
+Keep your API Keys safe
+API keys should be kept safe to prevent unauthorized access to sensitive resources and services, and to maintain the security and integrity of your Evervault account.
+
+Here are some tips on how to keep your API keys safe:
+
+Do not share your API keys: API keys are sensitive and should not be shared with anyone. Keep them secure and only provide access to those who need it.
+Store API keys securely: Store your API keys in a secure location, such as a password manager, and never store them in plain text or in public repositories.
+Rotate API keys regularly: Regularly rotate your API keys, especially if they have been compromised or if access is no longer required.
+Restrict API key access: Limit access to your API keys by scoping them to specific resources and services. This ensures that they only have access to the resources they need.
+Do not embed API keys directly in code: Embedding API keys directly in code, such as in configuration files, can make them more vulnerable to exposure. Instead, use environment variables or a configuration file that is not included in version control to store and manage your API keys.
+Global API Keys
+Global API keys are deprecated in favour of scoped API keys.
+
+Global API keys are API keys that have all permissions set by default. Existing global API keys will be migrated into scoped API keys that have all permissions. This will have no impact on current implementations. Scoped API keys provide a more secure and flexible way to control access to Evervault services.
+
+Cages Attestation in TLS
+Attestation is a central feature of secure enclaves. It offers a cryptographic guarantee of the remote enclave's integrity — the server you're speaking to is exactly as expected.
+
+Attesting a remote server can be difficult to get right, but can be extremely powerful. Evervault Cages embed the attestation check within the TLS handshake. This ensures that, when using an Evervault client, you cannot connect to a Cage that fails attestation.
+
+To do this, Cages use an Evervault signed root CA and generate an attestable leaf cert. The Evervault SDKs will then download the root CA public key and validate both the cert itself, and the embedded attestation document.
+
+CA Provisioning
+Overview of the Cage CA and Secrets Provisioning Handshake
+
+When your Cage boots within Evervault's Infrastructure, it performs a handshake with an Evervault managed provisioning server. The Evervault managed process that runs on the host EC2 instance connects to the provisioner over mTLS. The provisioner is then able to produce a signed token for that Cage to use to request its secrets over an attested connection.
+
+The process on the host then sends the signed token into the Enclave over VSock. The Evervault Data Plane within the Enclave embeds the token into an attestation document. It then opens a connection to the provisioner via the host process and performs a TLS handshake. Once TLS is established, the Data Plane sends a get request containing the token and attestation document.
+
+The provisioner uses the token and attestation document to identify the Cage, retrieve its secrets, and generates an intermediate CA for it to use to generate attestable certificates. The secrets and CA are only served to the Cage if the PCRs in the attestation document match the expected PCRs that were provided during the deployment.
+
+Cert Issuance
+Now that the Cage has been given its own CA, it can generate attestable certs to terminate TLS.
+
+Overview of the Cage Cert Issuance Process
+
+The Data Plane starts by generating a key pair to be used by the leaf cert. The public key of the leaf cert is then sent to the AWS Nitro Security Module in the challenge field. This creates a dependency between the attestation of the Cage and the TLS cert shared with the client.
+
+The data plane then generates a Certificate Signing Request (CSR). The Subject Alt Names in the CSR include both the base Cage hostname (<cage_name>.<app_uuid>.cages.evervault.com) and an attestable hostname (<attestation_doc>.<cage_name>.<app_uuid>.cages.evervault.com). The CSR is then signed by the intermediate cert, to produce the Cage's leaf cert. The inclusion of the attestable hostname in the leaf cert ties the TLS cert back to the Cage.
+
+Because there is a cyclic dependency between the cert used to terminate TLS and the attestation document within it, we can use it to prove that the TLS connection is only able to be terminated within the Enclave. To avoid replay attacks, this scheme also supports the inclusion of a nonce. Sending a request to <nonce>.<attest>.<cage_name>.<app_uuid>.cages.evervault.com will result in a fresh cert generation. The process for generating the cert is the same, but the nonce is taken from the requested hostname and included in the attestation document.
+
+Performing Attestation from the Client
+Now that the Cage has access to an intermediate CA, and has generated an attestable leaf cert, we can walk through the process of how a client will attest the Cage.
+
+The client begins by performing the steps of a typical TLS handshake:
+
+Validates the hostname corresponds with the requested domain
+Validates that there is a valid trust chain going back to the Cages Root CA.
+The client then attests the connection:
+
+Extracts the attestation document from the Subject Alternative Names
+Validates the signature over the Attestation Document against the public AWS Nitro CA.
+Validates that the embedded PCRs match the PCRs returned on build — the remote Cage is running the expected service.
+Optionally, confirms that the attestation document returned includes the nonce from their initial request.
+Confirms that the public key of the server cert is embedded within the attestation document
+Once all of the above checks have passed, the client can begin sending sensitive data into the Cage. This guarantees that the data is sent over a TLS connection directly to the enclave which is running the expected code.
+
+Overview of the Client Attestation Process
+
+Exploring the Potential Attacks
+While it’s helpful to understand how we provision the certificates used by a Cage, it’s more illustrative to step through the ways the connection could be intercepted, and show how this protocol uses standard TLS plus Attestation to protect your data.
+
+The following diagrams consider how a malicious actor within Evervault could attempt to perform a man-in-the-middle attack on your connection to the Cage, and how your client is protected in each case.
+
+Spoofed Cage Certificate
+Assuming a rogue actor within Evervault could obtain a CA signed by the Cages root CA, and could intercept the initial handshake from the client to the Cage, the MITM could then perform its own handshake (including the nonce provided by the client).
+
+The MITM could then use the response to its own handshake to extract an Attestation document from the Cage (Note: the attestation document contains the public key of the cert).
+
+The MITM could then generate a trusted certificate which contains this attestation document, which it would then use to complete the handshake with the client. The client would trust this cert as it has installed the Evervault Cages Root CA.
+
+However, as the client validates the attestation document, it would notice that the public key in the certificate doesn’t match the public key embedded within the attestation document.
+
+Diagram showing that a client performing attestation in TLS would reject a man-in-the-middle
+
+Intercepted Handshake
+To avoid the client detecting the public key mismatch, the MITM could alternatively generate a trusted cert which has the same public key as the cert held in the Cage. In this case, the client will be unable to detect that there is a MITM in place, but the MITM will be unable to decrypt any of the data over the connection.
+
+PCI DSS
+The Payment Card Industry Data Security Standard (PCI DSS) — published in 2005 — is a global security standard which applies to any organisation which stores, processes or transmits credit card data (”Cardholder Data”). The standard is designed to mitigate the risk of cardholder data theft, and drastically reduce successful card fraud. Card fraud is still increasing yearly, and according to a European Central Bank report, 2019 saw card fraud figures hitting €1.87 billion globally.
+
+The presence of PANs (Primary Account Numbers — more often referred to as credit card numbers), PINs or Sensitive Account Data (e.g. card validation codes, PINS, magnetic stripe contents, or anything used to authenticate cardholders) in an environment is the factor which determines whether an organisation is in scope for PCI DSS. Organisations who impact the security of a Cardholder Data Environment (CDE) can also be in scope for PCI DSS.
+
+Organisations who have been found to be non-compliant or breached can be subject to fines, increased transaction fees and, in some extreme instances, termination of an acquiring contract. Fines can vary, but a breached organisation should expect to:
+
+Pay between $3 (PAN only) and $18 (PAN with CVV/PIN) per card breached;
+Absorb the costs of the remediation effort to contain and eradicate the threat actor; and
+Lose access to the card networks—effectively shutting off the ability to process card payments until such time that the organisation can prove the threat is neutralised.
+PCI DSS is a particularly rigorous security standard (an annual spend of $100k+ is not uncommon), and with that rigour comes significant overhead required to manage and demonstrate the continuous security of card data. That’s why organisations who handle cardholder data are wise to de-risk and thereby de-scope their environments.
+
+Why is PCI DSS Required?
+PCI DSS is mandated by six major Card Brands (Visa, Mastercard, JCB, Amex, Discover and Union Pay) and is contractually enforced by Acquiring Banks.
+
+If you are a merchant and have signed an acquiring contract with a bank since 2005, it is highly likely that you are contractually bound to be PCI DSS compliant.
+
+It applies to service providers too. If you are a service provider, it’s likely that your merchants will be asking for your Attestation of Compliance (AoC), and its absence can often result in barriers to winning business.
+
+Audit requirements, rigour of audit and stakeholders differ based on the business model and volume of transactions, but the table below gives a high-level overview:
+
+Level	Service Provider	Merchant	External Audit Required	Attestation
+1	>300k	>6m	Yes	Report on Compliance (ROC)
+2	<300k	1-6m	No	Self Assessment (SAQ)
+3	n/a*	20k-1m	No	Self Assessment (SAQ)
+4	n/a*	<20k	No	Self Assessment (SAQ)
+Service providers can only be categorized as Level 1 or Level 2.
+
+Where do I start with PCI DSS?
+Getting started can seem overwhelming — there is a lot of content and nuance to decipher. However, like any audit, the first step is to determine scope. The Cardholder Data Environment (CDE) comprises people, processes, and technologies that store, process, or transmit cardholder data or sensitive authentication data. By mapping out your cardholder data flows, you can determine your scope.
+
+PCI DSS requirements apply to all system components included in or connected to the CDE. In the simplified diagram below—which describes a system handling plaintext credit card data—all components are in scope for the 300+ PCI DSS Requirements, because they directly store, process or transmit card data (or connect to systems which store card data). For developers impacted by these requirements, it becomes critical that you secure the data, infrastructure and code in your CDE.
+
+diagram
+
+What does this mean for developers?
+Traditionally, responsibilities have been assigned to specific skill sets like network engineers, database administrators, and systems administrators. In smaller companies comprised of full-stack developers, the technical and management implementation across all areas may fall squarely within their remit. Some of the controls you may be responsible for are listed in the table below.
+
+Network Security
+Architecture
+Rules management
+Firewalls
+Load balancing
+System Hardening and Configuration
+Secure Cryptographic Implementation
+Encryption Key Management
+Algorithm selection and configuration
+TLS Configuration
+Anti-Malware Management
+Secure Coding Training
+Dependency Assessment
+Application Security
+Web Application Scanning (DAST/SAST)
+Dependency Analysis
+OWASP Top 10 training
+Peer Code Review
+Software Development Change Management
+Defensive Programming Techniques
+Script Inventory Management
+Patching and Vulnerability Management
+Strict Change Management
+Segregation of Cloud Accounts
+Implementation of Least Privilege principle
+Authentication Security
+Multi-Factor Authentication
+Physical Security
+Logging, Monitoring and Alerting
+24x7 Response
+Intrusion Detection
+Vulnerability Scanning
+Penetration Testing
+Risk Assessment
+Policy Development
+Incident Response Management
+Awareness Training
+Threat Landscape Monitoring
+Phishing Simulations
+Third-Party Risk Management
+Show more
+Achieving and maintaining PCI DSS compliance typically requires an enormous engineering effort. This is often expensive, and diverts engineering effort away from the core product.
+
+The autonomy to focus on product is revoked in order to fulfil onerous compliance requirements.
+
+How can I reduce the burden?
+There are three primary ways to reduce the burden of PCI DSS Compliance.
+
+1. Never handle plaintext card data
+By never handling plaintext card data, your scope is hugely reduced — from ~300 controls to 12 basic security hygiene and policy-based controls. The technical controls can be managed through software:
+
+Authentication Configuration
+User Account Management
+Patching
+Methods
+Embed iFrames from Level 1 Service Providers (like Stripe Elements or Evervault Inputs)
+Leverage Network Encryption Proxies (like Evervault Inbound Relay)
+Completely outsource processing and application management to a compliant third-party.
+2. Automation
+By automating your PCI DSS compliance program with third-party and/or in-house tooling, you can reduce the human/time investment despite still being responsible for mapping to all ~300 PCI DSS controls.
+
+Methods
+Using pre-built secure Terraform templates
+Automated patching
+Automated vulnerability scanning
+Automated exception remediation
+Integrated governance management systems like Vanta or Secureframe.
+3. Reduce CDE footprint
+By reducing the footprint of your Cardholder Data Environment, you can reduce the effort required to comply with all ~300 PCI DSS controls by making sure they only apply to a smaller number of people, processes and systems.
+
+Methods
+Segment people involved with card data processing from those that do not
+Architect software such that the Cardholder Data Environment is entirely segregated from the rest of your infrastructure.
+Evervault and PCI DSS
+Evervault provides a complete solution to help organisations minimize the effort required to become PCI DSS compliant, and to de-risk their environments from cardholder data breaches.
+
+Using Evervault reduces the PCI DSS mandated controls to the following:
+
+Instance patching and vulnerability scanning
+Authentication Security and MFA
+Script and Code Dependency Inventory Management
+Third-Party Risk Management
+Incident Response Management
+Evervault Inputs
+Evervault Inputs makes it easy to collect cardholder data securely in the browser with our client-side SDKs.
+
+Evervault Inputs is served within an iFrame retrieved directly from Evervault’s PCI-compliant infrastructure, and all operations on card data, such as validity checks, also occur within the Evervault environment.
+
+Adopting this approach for card data collection can reduce your PCI DSS compliance scope to the simplest form (SAQ A Control Set), once integrated correctly.
+
+You can learn more about Evervault Inputs on the Inputs product page.
+
+HIPAA
+Encrypting with Evervault reduces your HIPAA compliance scope.
+
+Overview
+The Health Insurance Portability and Accountability Act 1996 (HIPAA) is a US Federal Law, which required the creation of national standards to protect sensitive patient health information from being disclosed without the patient’s consent or knowledge. The HIPAA Privacy Rule implements the requirements of HIPAA, and the HIPAA Security Rule protects a subset of information covered by the Privacy Rule — Electronic Protected Health Information (e-PHI).
+
+Privacy Rule
+Organisations covered by the Privacy Rule typically include:
+
+Healthcare Providers
+Health Plan Providers
+Healthcare Clearing Houses
+Business Associates (Service Providers to the above)
+A major goal of the Privacy Rule is to make sure that individuals’ health information is properly protected while allowing the flow of health information needed to provide and promote high-quality healthcare, and to protect the public’s health and well-being. The Privacy Rule permits important uses of information while protecting the privacy of people who seek care and healing.
+
+Security Rule
+While the HIPAA Privacy Rule safeguards PHI, the Security Rule protects a subset of information covered by the Privacy Rule. This subset is all individually identifiable health information a covered entity creates, receives, maintains, or transmits in electronic form. This information is called Electronic Protected Health Information, or e-PHI. The Security Rule does not apply to PHI transmitted orally or in writing.
+
+To comply with the HIPAA Security Rule, all covered entities must:
+
+Ensure the confidentiality, integrity, and availability of all e-PHI
+Detect and safeguard against anticipated threats to the security of the information
+Protect against anticipated impermissible uses or disclosures that are not allowed by the rule
+Certify compliance by their workforce
+Encryption plays a critical role in addressing points 1, 2 and 3 and organisations would be wise to implement both encryption in transit and at rest to protect personally identifiable sensitive personal health information.
+
+Evervault is formally designated as a covered entity, and is externally assessed for compliance to HIPAA as part of our SOC 2 Type 2 Assessment (documentation available on request). Using Evervault allows organisations to securely store, process and share sensitive health data using robust encryption schemes.
+
+GDPR
+Encrypting with Evervault reduces your GDPR compliance scope.
+
+Overview
+The General Data Protection Regulation (GDPR) (EU) 2016/679 is a regulation on data protection and privacy for all individuals within the European Union. It came into force across the European Union on May 25th 2018.
+
+The GDPR regulation is widely regarded as one of the toughest Privacy regulations in the world, particularly given its fines for non-compliance (4% of global revenues or €20m, whichever is higher) and its implications across nearly all aspects of business, inside and outside Europe. Any organisation is in scope for GDPR if they handle the personal data of an EU citizen.
+
+The GDPR splits in-scope parties into two main groups: Data Processors and Data Controllers, each with corresponding responsibilities.
+
+Data Controller: The person or entity which determines the purposes and means of the processing of personal data.
+
+Data Processor: A third party that processes personal data on behalf of a data controller.
+
+There are 7 primary principles relating to data handling which are defined by GDPR. Although we will focus on number 6, which is one of the most challenging to implement, the other elements also require a robust company-wide program in order to comply.
+
+Lawfulness, fairness and transparency
+Purpose limitation
+Data minimization
+Accuracy
+Storage limitation
+Integrity and confidentiality (security)
+Accountability
+Integrity and Confidentiality (Security)
+This Principle requires that data processing maintains appropriate security, integrity, and confidentiality.
+
+To expand on this, let's explain what data comes under GDPR scope.
+
+GDPR defines two categories of personal data based on their perceived risk and sensitivity (Article 9).
+
+Personal Data
+Name
+Address
+Date of Birth
+Financial Information
+Email Address
+IP Address
+Special Category Personal Data
+Racial or Ethnic Origin
+Political Opinions
+Religious or Philiosophical Beliefs
+Trade Union Membership
+Genetic Data and Biometric Data
+Health Data
+Sex Life and Sexual Orientation Data
+Special Category Data should always be secured with strong cryptography. GDPR considers robust encryption as an Appropriate Technical and Organisational Measure.
+
+Evervault Encryption can be used for Special Category information, while allowing processing of that in secure environments (using Functions or Cages). This allows Special Category Data to be processed in public clouds, while still preventing Cloud Service Providers or malicious individuals gaining access to the sensitive information.
+
+FAQ
+These are some questions we are frequently asked by our customers.
+
+Encryption
+Below you'll find questions related to encrypting data.
+
+What encryption scheme does Evervault use?
+You can learn more about the Evervault Encryption Scheme (EES) here.
+
+Do I need to manage encryption keys?
+No. Simply include our SDKs and Relay your data or deploy your functions to an Evervault Function. We handle everything else.
+
+Why is there no decrypt function in the Evervault SDKs?
+Traditionally, encryption has only been useful if it was a reversible transformation, i.e. if the encrypted data could be reversed back to its original, unencrypted form. If encryption was not reversible, the encrypted data was considered unreadable and unusable. This is why most encryption libraries have a decrypt() function available.
+
+Evervault Functions and Relay make the need for a decrypt() function redundant.
+
+Functions are secure, serverless functions for processing encrypted data. That is, encrypted data remains readable and usable — without the need for a decrypt() function being available.
+
+You can deploy a Function to return data in its unencrypted form. Function runs are logged so that you can see who accessed plaintext data.
+
+Relay is a proxy for encrypting data before it touches your API, and for decrypting it as you send it to a third-party API or return it to your users. Decryption takes place in E3, so no decrypt() function is necessary in our SDKs.
+
+Why is Evervault better than encryption at rest and in transit?
+Encryption in transit (using TLS) protects against man-in-the-middle attacks between the client and your server.
+
+Encryption at rest (at the disk-level, file-system-level, and database-level) protects against someone taking the physical drive from your machine and overriding your file-system, and prevents a non-authenticated admin accessing your database.
+
+However, neither encryption in transit or at rest protect against a malicious agent on your server because data still gets decrypted to be processed.
+
+With Evervault, data never exists on your infrastructure in plaintext — so it can never be lost or leaked.
+
+Why is Evervault better than open-source encryption libraries?
+There are two core reasons why Evervault is better than encryption libraries:
+
+1. No plaintext data on your infrastructure
+With encryption libraries like Web Crypto and Tink, you still need to decrypt sensitive data to process and get value from it. With Evervault, sensitive data is never decrypted (i.e. never exists in plaintext) on your infrastructure—so you cannot lose or leak it.
+
+2. No need to manage encryption keys
+With encryption libraries, you still need to manage encryption keys. Using Evervault means that you do not need to manage encryption keys. We take full responsibility for key management. The way we configure key management means that Evervault cannot decrypt your data—because your app’s API key is necessary for decryption.
+
+Storage
+Below you'll find questions related to storing encrypted data.
+
+Where do I store data I encrypted with Evervault?
+You store the data in your database as normal. There’s no need to change your data structure or format.
+
+Roles
+Below you'll find questions related to roles in your account.
+
+What are available roles within my account?
+In your Pro account you will see a dropdown of available roles within your team. The available roles are “Admin”, “Developer”, and “Read Only.”
+
+Each role varies in the permissions they have for reading, creating, deleting, and updating resources within an Evervault team account.
+
+If you are an admin of a team you can make any other member an admin or adjust their role. You can also control resource and service access by using Scoped API Keys
+
+Where are my Evervault API keys?
+Your API keys can be found in Settings. You can learn more on our dedicated docs page.
+
+Outbound Relay IP addresses
+Requests from Outbound Relay will come from Evervault infrastructure and so the IP will be from one of our servers. Should you need to modify an allowlist to accommodate these IPs, we have provided a list of our static IP addresses utilized by the Outbound Relay service:
+
+34.199.158.122
+52.48.156.228
+54.161.131.154
+54.216.126.127
+Is Evervault compliant?
+Evervault are a PCI DSS Level 1 Service Provider and SOC 2 Type II compliant. We can enter into BAAs under HIPAA. Request our reports
+
+Evervault's Setup Guide
+As when using any cloud based application there are always areas where both the consumer and service provider will have to manage information security responsibilities. Evervault follows the traditional SaaS model for security responsibilities. Evervault are responsible for the systems used to deliver the proposed services, and the customer is responsible for the data you chose to put through our systems & how you interact with our systems.
+
+Securing your credentials to access our platform is a critical step in protecting your environment. We have made several options available to enhance the security of access to the platform. It is up to you to ensure these are configured. In addition to standard good security hygiene, at a minimum Evervault suggest the following security good practice when using Evervault Securely:
+
+Management Plane Access
+Implement an approval process for access and monitor account activity
+Allocate access on a least privilege basis
+Allocated credentials to individual users, do not share accounts
+Quickly Amend / Remove User Access when no longer required
+Frequently Review Access
+Store and Share Credentials and API keys Securely
+Rotate API Keys when administrator leaves
+Select robust hard to guess passwords
+Enable Multi-factor authentication
+Disable Accounts immediately if you suspect compromise and alert support@evervault.com for further support.
+Store your API key in a secure secrets manager application
+Configure logging and alerting to record any access to / unexpected activity involving the API key
+Data Plane (app.evervault.com)
+Constantly review the fields that you have chosen to encrypt to ensure they are adequate
+Constantly review the chosen destination end points for your encrypted and decrypted data flows
+Implement a change and approval process to authorise changes to destinations and fields
+Adhere to Evervault patch advisories if SDKs are in use
